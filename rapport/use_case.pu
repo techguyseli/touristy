@@ -1,0 +1,46 @@
+@startuml use_case
+left to right direction
+
+' actors
+actor Guest as g
+actor User as u
+actor Admin as a
+
+' system package and use cases
+package "Nearby places localization system"{
+    usecase "Get information about nearby services" as g1
+    usecase "Get information about services nearby custom place from the map" as g2
+    usecase "Authenticate" as auth
+    usecase "Save services as favourits" as u2
+    usecase "Choose to save search history" as u3
+    usecase "Create modified plans for traveling" as u4
+    usecase "Manage personnal account" as acc_man
+    usecase "Manage users' accounts" as a1
+    usecase "Manage personnal services" as personnal_service_management
+    usecase "Manage all services" as service_management
+}
+
+' use case main relations
+g --> g1
+g --> g2
+u --> u2
+u --> u3
+u --> u4
+u --> acc_man
+a --> a1
+a --> acc_man
+a --> service_management
+u --> personnal_service_management
+
+' includes
+u2 ..> auth : <<include>>
+u3 ..> auth : <<include>>
+u4 ..> auth : <<include>>
+a1 ..> auth : <<include>>
+acc_man ..> auth : <<include>>
+service_management ..> auth : <<include>>
+personnal_service_management ..> auth : <<include>>
+
+' generalization
+g <|- u
+@enduml

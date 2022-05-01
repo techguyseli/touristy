@@ -1,0 +1,164 @@
+@startuml nearby_seq
+actor User as usr
+participant "GUI" as fr
+participant "System server" as sys
+participant "Database server" as db
+usr -> fr : Request nearby services
+activate usr
+activate fr
+fr -> fr : Get user/visitor coordinates
+fr -> sys : Request services nearby coordinates
+activate sys
+sys -> db : Query places nearby coordinates
+activate db
+db --> sys : Send query results
+deactivate db
+alt Query not empty
+    sys --> fr : Render available services' webpage
+else else
+    sys --> fr : Render custom message
+    deactivate sys
+end
+deactivate sys
+@enduml
+
+
+@startuml map_nearby_seq
+actor User as usr
+participant "GUI" as fr
+participant "System server" as sys
+participant "Database server" as db
+usr -> sys : Request map selection webpage
+activate usr
+activate sys
+sys --> fr : Render webpage 
+activate fr
+usr -> fr : Select place in the map
+fr -> sys : Request services nearby selected coordinates
+sys -> db : Query places nearby coordinates
+activate db
+db --> sys : Send query results
+deactivate db
+alt Query not empty
+    sys --> fr : Render available services' webpage
+else else
+    sys --> fr : Render error message
+    deactivate sys
+end
+@enduml
+
+
+@startuml sign_in
+actor User as usr
+participant "GUI" as fr
+participant "System server" as sys
+participant "Database server" as db
+activate usr
+usr -> sys : Request sign in webpage
+sys --> fr : Render webpage
+activate fr
+usr -> fr : Fill sign in form
+fr -> fr : Check form info validity
+alt form is valid
+    fr -> sys : Submit form
+    activate sys
+else else
+    fr --> usr : Alert error message
+end
+sys -> db : Query username and password
+activate db
+db --> sys : Send query results
+deactivate db
+alt user exists
+    sys -> fr : Log in and redirect user to main webpage
+else else
+    sys -> fr : Render error message         
+end
+@enduml
+
+
+@startuml add_favourites
+actor User as usr
+participant "GUI" as fr
+participant "System server" as sys
+participant "Database server" as db
+activate usr
+activate fr
+usr -> fr : Add service to favorites
+fr -> sys : Send request with service identifier
+sys -> db : Query this service from user's favourites
+activate sys
+activate db
+db --> sys : Send query results
+deactivate db
+alt service does not exist
+    sys -> db : Add service to user's favourites
+    activate db
+    deactivate db
+    sys --> fr : Notify success message
+else else
+    sys --> fr : Notify user    
+end
+@enduml
+
+
+@startuml register_user
+actor User as usr
+participant "GUI" as fr
+participant "System server" as sys
+participant "Database server" as db
+usr -> sys : Request sign up webpage
+activate usr
+activate sys
+sys --> fr : Render webpage
+activate fr
+usr -> fr : Fill sign up form
+fr -> fr : Check form info validity
+alt form is valid
+    fr -> sys : Submit form
+    sys -> db : Query username
+    activate db
+    db --> sys : Send query results
+    deactivate db
+    alt username does not exists
+        sys -> db : Add user to database
+        activate db
+        deactivate db
+    else else
+        sys -> fr : Render error message
+    end
+else else
+    fr --> usr : Alert error message
+end
+@enduml
+
+@startuml modify_personnal_service
+actor User as usr
+participant "GUI" as fr
+participant "System server" as sys
+participant "Database server" as db
+activate usr
+usr -> sys : Request a service modification page
+activate sys
+sys --> fr : Render webpage
+activate fr
+usr -> fr : Fill new info form
+fr -> fr : Check form info validity
+alt form is valid
+    fr -> sys : Submit form
+    sys -> db : Query user's services
+    activate db
+    db --> sys : Send query results
+    deactivate db
+    alt service to modify exists in query
+        sys -> db : Update service info
+        activate db
+        deactivate db
+        sys -> fr : Notify success
+    else else
+        sys -> fr : Render error message
+    end
+else else
+    fr --> usr : Alert error message
+end
+@enduml

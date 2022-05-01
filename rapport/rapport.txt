@@ -1,0 +1,105 @@
+Rapport du projet
+3ème année
+Ingénierie Informatique et Réseaux
+
+Application web de localisation des services les plus proches
+
+Réalisé par:
+Selaiman Kassou, Mohammad Chlouchi
+
+Encadré par:
+Mme. Imane Chlioui
+
+ANNEE UNIVERSITAIRE: 2021-2022
+
+Plan:
+Chapitre I: Contexte générale
+    1. Etude de l'existent
+        A. TripAdvisor
+        B. Foursquare
+        C. Yelp
+    2. Le problematique
+    3. La solution
+Chapitre II: L'analyse et la conception
+    4. Cahier des charges : aham hwayj li yqder ydir user w sff
+    4. Besoins fonctionnelles
+    5. Besoins non-fonctionnelles
+    6. Les règles de gestion
+    2. Le diagramme des cas d'utilisation
+    3. Le diagramme des classes
+    4. Le diagramme de séquence
+Chapitre III réalisation:
+    1. Les besoins techniques    
+	implementation: tsawer w masail
+
+Introduction:
+ Dans le cadre du PFA, ce projet sera une application web qui permettra à ses utilisateurs, d'avoir un accès instantané à tous les services à proximité d'eux, ou dans d'autres lieux. Ces services seront des restaurants, des hôtels, les épiceries, et les stations de services.
+
+Chapitre I: Le cahier des charges
+
+1. Etude de l'existent
+A. TripAdvisor
+    TripAdvisor est l'une des ressources les plus utiles pour voyager en raison du nombre d'avis qu'il a pour les hébergements dans le monde entier.
+    a. Les avantages
+        - Les avis – L'une des meilleures fonctionnalités de TripAdvisor – et la raison pour laquelle il est devenu un site Web de voyage si établi – est la collection d'avis que le site Web possède. Des utilisateurs du monde entier ont examiné les hébergements et les emplacements en fonction de leurs propres expériences réelles.
+        - De vraies images de vrais voyageurs – En plus des avis, TripAdvisor permet à ses utilisateurs de partager des photos de leurs propres expériences. Combien de fois avez-vous réservé un séjour dans un hôtel ou un centre de villégiature, puis à votre arrivée, votre chambre ne ressemblait en rien aux photos qui étaient sur le site Web? TripAdvisor résout ce problème en permettant aux voyageurs d'ajouter leurs propres photos, afin que vous ayez une impression beaucoup plus réaliste de l'endroit où vous allez avant de réserver!
+        - Variété d'informations – TripAdvisor offre un aperçu de nombreux aspects différents de votre voyage. Vous pouvez apprendre tous les détails de votre hébergement ou de la ville où vous voyagerez. TripAdvisor propose même des guides de voyage pour vous aider à décider quoi faire lorsque vous atteignez votre destination ! Vous pouvez faire beaucoup de recherches avant de réserver, ce qui augmente considérablement vos chances de prendre une bonne décision lorsque vous choisissez finalement de réserver.
+    b. Les inconvénients
+        - Qui contribue? – Bien que l'une des meilleures fonctionnalités de TripAdvisor soit les millions d'avis qu'il a sur divers établissements, littéralement toute personne ayant accès à Internet et une adresse e-mail pourrait contribuer à un avis. Il n'y a aucun moyen de savoir à quel point un avis est véridique, et il est même possible que les propriétaires ajoutent des critiques positives pour leurs propres hébergements afin d'augmenter les notes.
+        - Pas un site de réservation à l'avance – La possibilité de réserver directement sur TripAdvisor est une fonctionnalité plus récente du site Web, et n'est donc pas aussi étendue que sur d'autres sites de réservation. Pour garantir que vous obtenez les meilleurs prix et offres, vous voudrez peut-être utiliser un site de réservation plus établi.
+        - L'UI / UX est assez déroutante et compliquée.
+
+B. Foursquare
+    Foursquare City Guide vous conduira à l'endroit idéal, n'importe où dans le monde. Obtenez des conseils utiles et positifs de notre communauté mondiale de confiance et gardez une trace de l'endroit où vous avez été et où vous voulez aller, le tout en un seul endroit.
+    a. Les avantages
+        - Trouvez tout ce dont vous avez besoin, rapidement! – Foursquare peut vous aider à trouver rapidement exactement ce que vous cherchez dans votre région. Recherchez simplement le type d'installation que vous recherchez (restaurant, discothèque, quelque chose dans une ville particulière, etc.), et il vous montrera les choses les plus proches autour de vous qui correspondent à ce que vous recherchez. Si vous téléchargez l'application, vous pouvez l'emporter avec vous lors de vos déplacements, ce qui vous permet de trouver des choses autour de vous pendant que vous êtes dehors.
+        - Évitez les déceptions ou les fausses déclarations – Parce que Foursquare a des critiques et des conseils pour ses utilisateurs, vous pouvez tout apprendre sur une entreprise ou un emplacement avant même d'y arriver. Plus jamais un endroit ne vous fera croire que vous obtenez quelque chose que vous n'êtes pas, parce que de vraies personnes ont été là, l'ont examiné et vous ont dit exactement ce qui vous attendait.
+        - Il apprend ce que vous aimez au fur et à mesure que vous l'utilisez – Plus vous utilisez Foursquare, plus il peut faire des suggestions pour vous. En d'autres termes, cela vous aide à trouver des endroits que vous pourriez aimer en fonction des endroits que vous aimez déjà! Ceci est particulièrement utile lorsque vous visitez une nouvelle ville, car Foursquare peut vous indiquer les endroits où aller dans cette ville en fonction de ceux que vous aimez à la maison!
+    b. Les inconvénients
+        - Pas autant d'avis que d'autres sites Web - Bien que Foursquare soit utile pour trouver des entreprises et des choses amusantes que vous aimeriez, il n'a pas autant d'utilisateurs que des sites Web plus établis comme TripAdvisor.com. Pas autant d'entreprises ont été ajoutées à leur collection, et (par conséquent) pas autant d'avis sont là pour vous aider.
+        - Les messages de spam sont souvent présents – Certains utilisateurs utilisent la section conseils et critiques du site Web pour promouvoir leurs propres entreprises, bien que cela n'ait probablement rien à voir avec ce que vous recherchez sur Foursquare. En outre, les propriétaires peuvent ajouter de faux avis sur leur lieu d'affaires, alors méfiez-vous de prendre chaque avis que vous voyez pour être entièrement véridique.
+
+C. Yelp
+    Les gens utilisent Yelp pour tout rechercher, du hamburger le plus savoureux de la ville au cardiologue le plus renommé.
+    a. Les avantages
+        - Les avis ont tendance à être dignes de confiance. Jusqu'à 93% des gens disent que les avis en ligne affectent leur décision d'achat. Cela signifie que si vous avez de bonnes critiques sur Yelp, il y a de fortes chances que les consommateurs qui lisent les critiques choisissent votre entreprise.
+        - Exposition. Yelp est une entreprise massive avec une gamme étendue. Des milliers de personnes consultent régulièrement Yelp délibérément afin d'obtenir un avis, il est donc important d'être répertorié sur ce site Web si vous souhaitez tirer le meilleur parti de votre exposition.
+        - Classement. Yelp a tendance à très bien se classer dans Google, surtout s'il n'y a pas beaucoup d'autres concurrents pour le nom de votre entreprise. Si vous voulez que les deux premières entrées sur Google soient votre site Web et des critiques positives sur votre site Web, maintenir d'excellentes critiques sur Yelp est une bonne idée.
+    b. Les inconvénients
+        - Les avis ne sont pas toujours dignes de confiance. Une étude récente a révélé que jusqu'à 16% des avis sur Yelp sont faux. La plupart des fausses critiques provenaient de restaurants qui voulaient réparer les dommages causés par les écrits négatifs.
+        - Yelp filtre les avis. Yelp a un algorithme très rigoureux afin de capturer les faux avis, mais il peut également filtrer les avis positifs et ne pas attraper certains faux avis.
+        - Yelp peut être insistant. Des poursuites ont été intentées contre Yelp pour publicité agressive, ainsi que pour extorsion. Des accusations ont été faites selon lesquelles Yelp propose un abonnement publicitaire coûteux afin d'obtenir des critiques négatives plus bas sur la page pour les entreprises. Il y a eu toutes sortes de plaintes comme celle-ci déposées contre Yelp au fil des ans. On ne sait pas combien de vérité il y a dans diverses affirmations, mais il semble y avoir des preuves suggérant que Yelp peut être pour le moins insistant lorsqu'il encourage les propriétaires d'entreprise à payer pour une publicité plus avancée.
+
+2. Le problematique
+la plupart des applications de localisation de services ont au moins 1 de ces 3 problèmes :
+    - L'expérience utilisateur est mauvaise ou du moins complexe et n'est pas directe. 
+    - Les critiques ne sont pas dignes de confiance. 
+    - L'application est gonflée d'utilitaires, de services, d'annonces et de trackers inutiles.
+
+3. La solution
+Créer une application web pour la localisation des services qui est : 
+    - Pragmatique et droit au but en matière d'expérience utilisateur. 
+    - Digne de confiance quand il s'agit d'avis. 
+    - Poids léger sans fonctionnalités supplémentaires sans aucun sens.
+
+4. Besoins fonctionnelles
+    a. Visiteurs
+        - Consultez les informations (géolocalisation, noms, description, images, évaluations, prix) sur les services à proximité (des restaurants, des hôtels, les épiceries, et les stations de services)
+        - Découvrez les mêmes informations sur les mêmes services dans d'autres endroits du monde.
+    b. Utilisateurs connectés
+        - Gestion de compte.
+        - Peut faire les mêmes choses que les visiteurs. 
+        - Peut enregistrer des services en tant que favoris.
+        - Peut enregistrer l'historique de recherche.
+        - Peut créer des plans de voyage personnalisés (avec les places/services à visiter et les dates).
+    c. Admin
+        - Gestion des comptes des utilisateurs.
+
+5. Besoins non-fonctionnelles
+  - Utilisation pragmatique et économique de l'interface utilisateur et des éléments graphiques pour les vitesses de chargement.
+  - UX simple.
+  - Sécurité et confidentialité des informations des utilisateurs.
+
+6. Les règles de gestion
+  - Localisation automatique des utilisateurs connectés et visiteurs.
+
