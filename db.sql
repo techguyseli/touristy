@@ -87,7 +87,8 @@ create table stop(
     unique plan_service_time(plan_id, service_id, stop_datetime)
 );
 
-
-
-
+CREATE DATABASE touristy_db CHARACTER SET UTF8;
+CREATE USER touristy_test_user@localhost IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON touristy_db.* TO touristy_test_user@localhost;
+FLUSH PRIVILEGES;
 
