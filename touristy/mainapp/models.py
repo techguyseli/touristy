@@ -43,3 +43,7 @@ create table service(
 class User(models.Model):
     user_id = models.IntegerField();
     user_name = models.CharField(max_length=50)
+    
+    status = models.CharField(max_length=15)
+    history_on = models.models.PositiveSmallIntegerField(1)
+    
