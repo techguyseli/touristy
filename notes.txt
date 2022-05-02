@@ -1,1 +1,2 @@
 javascript maps extension: https://leafletjs.com/
+https://nitratine.net/blog/post/how-to-hash-passwords-in-python/
