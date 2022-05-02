@@ -7,7 +7,8 @@ Public_user "*" -- "*" Service
 
 class Account
 Account : -username
-Account : -password
+Account : -hash
+Account : -salt
 Account : +change_pass(current, new)
 Account : +change_username(current, new)
 Account : +delete_acc()
@@ -33,7 +34,7 @@ User_Account "1" -- "*" Search_history : Add
 User_Account "1" -- "*" Service : Manage personnal
 
 class Search
-Search : -nearby_state
+Search : -distance
 
 class Service
 Service : -latitude

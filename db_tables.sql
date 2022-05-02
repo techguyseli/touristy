@@ -1,3 +1,7 @@
+create database touristy_db;
+
+use touristy_db;
+
 create table user(
     user_id int primary key auto_increment,
     user_name varchar(50) unique not null,
@@ -40,7 +44,7 @@ create table image(
     image_url varchar(300) not null,
     service_id int not null,
     constraint image_fk foreign key (service_id) references service(service_id) on delete cascade,
-    unique 
+    unique image_unique(image_url, service_id)
 );
 
 create table rating(
