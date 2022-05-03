@@ -1,4 +1,5 @@
 from django.db import models
+
 # Create your models here.
 
 class User(models.Model):
@@ -13,7 +14,6 @@ class User(models.Model):
             models.CheckConstraint(check=models.Q(status__in=['active', 'banned', 'suspended']), name='status_value_in'),
         ]
 
-
 class Search(models.Model):
     search_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey('User', on_delete=models.CASCADE)
@@ -21,25 +21,22 @@ class Search(models.Model):
     class Meta:
         unique_together = ['user_id', 'search_str']
 
-
 class Admin(models.Model):
     admin_id = models.AutoField(primary_key=True)
     admin_name = models.CharField(max_length=50, unique=True)
     admin_hash = models.CharField(max_length=200)
     admin_salt = models.CharField(max_length=200)
 
-
 class Service(models.Model):
     service_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey('User', on_delete=models.CASCADE)
-    latitude = models.DoubleField(max_digits=20, decimal_places=17)
-    longitude = models.DoubleField(max_digits=20, decimal_places=17)
+    latitude = models.DecimalField(max_digits=20, decimal_places=17)
+    longitude = models.DecimalField(max_digits=20, decimal_places=17)
     service_title = models.CharField(max_length=40)
     service_type = models.CharField(max_length=20)
     adress = models.CharField(max_length=60)
     class Meta:
         unique_together = ['latitude', 'longitude', 'service_title']
-
 
 class Image(models.Model):
     image_id = models.AutoField(primary_key=True)
@@ -47,7 +44,6 @@ class Image(models.Model):
     service_id = models.ForeignKey('Service', on_delete=models.CASCADE)
     class Meta:
         unique_together = ['image_url', 'service_id']
-
 
 class Rating(models.Model):
     rating_id = models.AutoField(primary_key=True)
@@ -61,7 +57,6 @@ class Rating(models.Model):
             models.CheckConstraint(check=(models.Q(stars__gte=0) & models.Q(stars__lte=5)), name='stars_gte_0_lte_5'),
         ]
 
-
 class Favorite(models.Model):
     favorite_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey('User', on_delete=models.CASCADE)
@@ -69,7 +64,6 @@ class Favorite(models.Model):
     add_date = models.DateField(auto_now_add=True)
     class Meta:
         unique_together = ['user_id', 'service_id']
-
 
 class Plan(models.Model):
     plan_id = models.AutoField(primary_key=True)
@@ -80,7 +74,6 @@ class Plan(models.Model):
     plan_end = models.DateField(auto_now=False, auto_now_add=False)
     class Meta:
         unique_together = ['plan_title', 'user_id']
-
 
 class Stop(models.Model):
     stop_id = models.AutoField(primary_key=True)
