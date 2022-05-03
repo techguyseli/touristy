@@ -2,6 +2,7 @@ create database touristy_db;
 
 use touristy_db;
 
+--history on is a boolean
 create table user(
     user_id int primary key auto_increment,
     user_name varchar(50) unique not null,
@@ -13,7 +14,6 @@ create table user(
     constraint check_history_on check(history_on = 0 or history_on = 1)
 );
 
---modify in mainapp models (primary key, unique constraint)
 create table search(
     search_id int primary key auto_increment,
     user_id int not null,
@@ -29,7 +29,6 @@ create table admin(
     admin_salt varchar(200) not null
 );
 
---modify in mainapp models (owner_id to user_id, foreign key)
 create table service(
     service_id int primary key auto_increment,
     user_id int not null,

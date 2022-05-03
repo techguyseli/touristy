@@ -3,17 +3,21 @@ from django.db import models
 
 class User(models.Model):
     user_id = models.AutoField(primary_key=True)
-    user_name = models.CharField(max_length=50,unique=True)
+    user_name = models.CharField(max_length=50, unique=True)
     user_hash = models.CharField(max_length=200)
     user_salt = models.CharField(max_length=200)
-    status = models.CharField(max_length=15,null=False,default='active')
-    history_on = models.models.PositiveSmallIntegerField(maxval=1,default=0)
+    status = models.CharField(max_length=15, default='active')
+    history_on = models.BooleanField()
+    class Meta:
+        constraints = [
+            models.CheckConstraint(check=models.Q(status__in=['active', 'banned', 'suspended']), name='status_value_in'),
+        ]
     
 
 class Search(models.Model):
     search_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey('User', on_delete=models.CASCADE)
-    search_str = models.CharField(max_length=100,unique=True)
+    search_str = models.CharField(max_length=100)
     class Meta:
         unique_together = ['user_id', 'search_str']
     
@@ -21,18 +25,18 @@ class Search(models.Model):
 
 class Admin(models.Model):
     admin_id = models.AutoField(primary_key=True)
-    admin_name = models.CharField(max_length=50,unique=True)
+    admin_name = models.CharField(max_length=50, unique=True)
     admin_hash = models.CharField(max_length=200)
     admin_salt = models.CharField(max_length=200)
 
 
 class Service(models.Model):
     service_id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey('User')
-    latitude = models.DoubleField(null=False,max_digits=20,decimal_places=17)
-    longitude = models.DoubleField(null=False,max_digits=20,decimal_places=17)
+    user_id = models.ForeignKey('User', on_delete=models.CASCADE)
+    latitude = models.DoubleField(max_digits=20, decimal_places=17)
+    longitude = models.DoubleField(max_digits=20, decimal_places=17)
     service_title = models.CharField(max_length=40)
-    type = models.CharField(max_length=20)
+    service_type = models.CharField(max_length=20)
     adress = models.CharField(max_length=60)
     class Meta:
         unique_together = ['latitude', 'longitude', 'service_title']
