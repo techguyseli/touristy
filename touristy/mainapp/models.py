@@ -10,7 +10,7 @@ class User(models.Model):
     history_on = models.models.PositiveSmallIntegerField(maxval=1,default=0)
     
 
-class search(models.Model):
+class Search(models.Model):
     search_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey('User', on_delete=models.CASCADE)
     search_str = models.CharField(max_length=100,unique=True,null=False)
@@ -19,16 +19,16 @@ class search(models.Model):
     
 
 
-class admin(models.Model):
+class Admin(models.Model):
     admin_id = models.AutoField(primary_key=True)
     admin_name = models.CharField(max_length=50,unique=True,null=False)
     admin_hash = models.CharField(max_length=200,null=False)
     admin_salt = models.CharField(max_length=200,null=False)
 
 
-class service(models.Model):
+class Service(models.Model):
     service_id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey('User',default=None)
+    user_id = models.ForeignKey('User',null=False)
     latitude = models.DoubleField(null=False,max_digits=20,decimal_places=17)
     longitude = models.DoubleField(null=False,max_digits=20,decimal_places=17)
     service_title = models.CharField(max_length=40,null=False)
