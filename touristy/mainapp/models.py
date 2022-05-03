@@ -1,49 +1,52 @@
 from django.db import models
 
 # Create your models here.
-'''
-create table user(
-    user_id int primary key auto_increment,
-    user_name varchar(50) unique not null,
-    user_hash varchar(200) not null,
-    user_salt varchar(200) not null,
-    status varchar(15) default 'active',
-    history_on tinyint(1) default 0,
-    constraint check_status check(status = 'active' or status = 'banned' or status = 'suspended'),
-    constraint check_history_on check(history_on = 0 or history_on = 1)
-);
 
-create table search(
-    user_id int not null,
-    search_str varchar(100) not null,
-    constraint search_fk foreign key (user_id) references user(user_id) on delete cascade,
-    unique search_unique (user_id, search_str)
-);
+class Image(models.Model):
+    image_id = models.AutoField(primary_key=True)
+    image_url = models.CharField(max_length=300)
+    service_id = models.ForeignKey('Service', on_delete=models.CASCADE)
+    class Meta:
+        unique_together = ['image_url', 'service_id']
 
-create table admin(
-    admin_id int primary key auto_increment,
-    admin_name varchar(50) unique not null,
-    admin_hash varchar(200) not null,
-    admin_salt varchar(200) not null
-);
 
-create table service(
-    service_id int primary key auto_increment,
-    owner_id int not null,
-    latitude double(20, 17) not null,
-    longitude double(20, 17) not null,
-    service_title varchar(40) not null,
-    type varchar(20) not null,
-    adress varchar(60) not null,
-    constraint foreign key (owner_id) references user(user_id),
-    unique service_composite_unique(latitude, longitude, service_title)
-);
-'''
+class Rating(models.Model):
+    rating_id = models.AutoField(primary_key=True)
+    user_id = models.ForeignKey('User', on_delete=models.CASCADE)
+    service_id = models.ForeignKey('Service', on_delete=models.CASCADE)
+    stars = models.IntegerField()
+    comment_str = models.CharField(max_length=200)
+    class Meta:
+        unique_together = ['user_id', 'service_id']
+        constraints = [
+            models.CheckConstraint(check=(models.Q(stars__gte=0) & models.Q(stars__lte=5)), name='stars_gte_0_lte_5'),
+        ]
 
-class User(models.Model):
-    user_id = models.IntegerField();
-    user_name = models.CharField(max_length=50)
-    
-    status = models.CharField(max_length=15)
-    history_on = models.models.PositiveSmallIntegerField(1)
-    
+
+class Favorite(models.Model):
+    favorite_id = models.AutoField(primary_key=True)
+    user_id = models.ForeignKey('User', on_delete=models.CASCADE)
+    service_id = models.ForeignKey('Service', on_delete=models.CASCADE)
+    add_date = models.DateField(auto_now_add=True)
+    class Meta:
+        unique_together = ['user_id', 'service_id']
+
+
+class Plan(models.Model):
+    plan_id = models.AutoField(primary_key=true)
+    user_id = models.ForeignKey('User', on_delete=models.CASCADE)
+    plan_title = models.CharField(max_length=30)
+    plan_description = models.CharField(max_length=100)
+    plan_start = models.DateField(auto_now=False, auto_now_add=False)
+    plan_end = models.DateField(auto_now=False, auto_now_add=False)
+    class Meta:
+        unique_together = ['plan_title', 'user_id']
+
+
+class Stop(models.Model):
+    stop_id = models.AutoField(primary_key=True)
+    plan_id = models.ForeignKey('Plan', on_delete=models.CASCADE)
+    service_id = models.ForeignKey('Service', on_delete=models.CASCADE)
+    stop_datetime = models.DateTimeField(auto_now=False, auto_now_add=False)
+    class Meta:
+        unique_together = ['plan_id', 'service_id', 'stop_datetime']
