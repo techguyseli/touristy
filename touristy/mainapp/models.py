@@ -12,7 +12,7 @@ class User(models.Model):
         constraints = [
             models.CheckConstraint(check=models.Q(status__in=['active', 'banned', 'suspended']), name='status_value_in'),
         ]
-    
+
 
 class Search(models.Model):
     search_id = models.AutoField(primary_key=True)
@@ -20,7 +20,6 @@ class Search(models.Model):
     search_str = models.CharField(max_length=100)
     class Meta:
         unique_together = ['user_id', 'search_str']
-    
 
 
 class Admin(models.Model):
