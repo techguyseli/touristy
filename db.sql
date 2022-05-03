@@ -63,7 +63,7 @@ create table rating(
 );
 
 create table favorite(
-    favourite_id int primary key auto_increment,
+    favorite_id int primary key auto_increment,
     user_id int,
     service_id int,
     add_date date not null,
@@ -75,11 +75,12 @@ create table favorite(
 create table plan(
     plan_id int primary key auto_increment,
     user_id int not null,
-    plan_title varchar(30) unique not null,
+    plan_title varchar(30) not null,
     plan_description varchar(100),
     plan_start date not null,
     plan_end date not null,
-    constraint plan_user_fk foreign key (user_id) references user(user_id) on delete cascade
+    constraint plan_user_fk foreign key (user_id) references user(user_id) on delete cascade,
+    unique plan_unique (plan_title, user_id)
 );
 
 create table stop(
