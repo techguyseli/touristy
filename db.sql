@@ -35,7 +35,7 @@ create table service(
     latitude double(20, 17) not null,
     longitude double(20, 17) not null,
     service_title varchar(40) not null,
-    type varchar(20) not null,
+    service_type varchar(20) not null,
     adress varchar(60) not null,
     constraint service_fk foreign key (user_id) references user(user_id),
     unique service_composite_unique(latitude, longitude, service_title)
