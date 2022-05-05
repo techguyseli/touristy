@@ -6,16 +6,13 @@
 
 <!-- modifier juste le body pour créer le formuaire-->
 {% block body %}
-<div class="text-center mt-5">
-    <br><br><br><br><br><br><br>
+<div class="center">
     <form style="max-width: 370px; margin:auto;" method="post" action="{% url 'login' %}">
         {% csrf_token %}
         <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-        <input type="username" name="username" id="username" class="form-control mb-3" placeholder="Username" required autofocus> 
-        <input type="password" name="password" id="password" class="form-control mb-3" placeholder="Password" required autofocus>  
-        <div class="mt-3">
-            <button class="btn btn-lg btn-primary btn-block">Sign in</button>
-        </div>
+        <input type="text" name="username" id="username" class="form-control mb-3" placeholder="Username" required autofocus> 
+        <input type="password" name="password" id="password" class="form-control mb-3" placeholder="Password" required autofocus> 
+        <input type="submit" value="Login"> 
     </form><div class="mt-4">
         <div class="d-flex justify-content-center links">
             Don't have an account? <a href="{% url 'register' %}" class="ml-2"> Sign Up</a>
