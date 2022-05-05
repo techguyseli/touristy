@@ -8,7 +8,7 @@
 {% block body %}
 <div class="text-center mt-5">
     <br><br><br><br><br><br><br>
-    <form style="max-width: 370px; margin:auto;" method="post">
+    <form style="max-width: 370px; margin:auto;" method="post" action="{% url 'login' %}">
         {% csrf_token %}
         <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
         <input type="username" name="username" id="username" class="form-control mb-3" placeholder="Username" required autofocus> 
