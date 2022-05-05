@@ -6,8 +6,8 @@
 
 {% block body %}
 <div class="text-center position-absolute top-50 start-50 translate-middle">
-    <h1 class="h3 mb-4 font-weight-normal">Register your touristy account</h1>
-    <form action="{% url 'register' %}" method="post" class="w-75 mx-auto" name="register">
+    <h1 class="h3 mb-4 font-weight-normal">Create a touristy account</h1>
+    <form action="{% url 'register' %}" method="post" class="w-75 mx-auto">
         {% csrf_token %}
         <input type="username" name="username" class="form-control mb-3" placeholder="Username" minlength="8" required autofocus> 
         <input type="password" name="password" id="password" class="form-control mb-3" placeholder="Password" minlength="8" required autofocus>  

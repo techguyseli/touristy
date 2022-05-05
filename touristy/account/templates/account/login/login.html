@@ -6,7 +6,7 @@
 
 {% block body %}
 <div class="text-center position-absolute top-50 start-50 translate-middle">
-    <h1 class="h3 mb-4 font-weight-normal">Login to your touristy account</h1>
+    <h1 class="h3 mb-4 font-weight-normal">Touristy account login</h1>
     <form action="{% url 'login' %}" method="post" class="w-75 mx-auto">
         {% csrf_token %}
         <input type="username" name="username" class="form-control mb-3" placeholder="Username" required autofocus> 
