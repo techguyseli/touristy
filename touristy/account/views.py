@@ -6,9 +6,9 @@ from django.contrib.auth import authenticate, login
 def login(request):
     # code here, in case successful login, redirect to service/nearby route
     if request.method == 'POST':
-        user_id = request.POST.get('user_id')
-        user_password =request.POST.get('user_password')
-        User = authenticate(request,user_id=user_id,user_password=user_password)
+        username = request.POST.get('username')
+        password =request.POST.get('password')
+        User = authenticate(request,username=username,password=password)
         if User is not None:
             login(request,User)
             return redirect("service/nearby/nearby.html")
