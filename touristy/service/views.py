@@ -2,7 +2,5 @@ from django.shortcuts import render
 
 # Create your views here.
 
-def nearby(request, message=None):
-    return render(request, 'service/nearby/nearby.html', {
-        "message" : message
-    })
+def nearby(request):
+    return render(request, 'service/nearby/nearby.html')

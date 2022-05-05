@@ -5,6 +5,11 @@
 {% endblock %}
 
 {% block body %}
+{% if message %}
+<div class="alert alert-warning" role="alert">
+    {{ message }}
+</div>
+{% endif %}
 <div class="text-center position-absolute top-50 start-50 translate-middle">
     <h1 class="h3 mb-4 font-weight-normal">Touristy account login</h1>
     <form action="{% url 'login' %}" method="post" class="w-75 mx-auto">

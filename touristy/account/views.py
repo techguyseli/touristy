@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login as dj_login
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 
@@ -11,12 +11,16 @@ from .forms import RegisterUserForm
 def login(request):
     # code here, in case successful login, redirect to service/nearby route
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password =request.POST.get('password')
-        User = authenticate(request,username=username,password=password)
-        if User is not None:
-            login(request,User)
-            return redirect("service/nearby/nearby.html")
+        form_username = request.POST.get('username')
+        form_password =request.POST.get('password')
+        user = authenticate(request, username=form_username, password=form_password)
+        if user is not None:
+            dj_login(request, user)
+            return redirect("nearby")
+        else:
+            return render(request, "account/login/login.html", {
+                "message" : "Wrong username or password!"
+            })
     return render(request, "account/login/login.html")
 
 def register(request):
