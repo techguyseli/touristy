@@ -16,4 +16,8 @@ def login(request):
 
 def register(request):
     # code here, in case successful registry, redirect to login
-    return render(request, 'account/register/register.html')
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password =request.POST.get('password')
+        return redirect("login")
+    return render(request, "account/register/register.html")
