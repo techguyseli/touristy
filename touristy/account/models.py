@@ -1,8 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-from service.models import Service
 
-# Create your models here.
+from service.models import Service
 
 class Favorite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='favorites')
