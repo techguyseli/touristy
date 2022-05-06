@@ -1,0 +1,50 @@
+{% extends "service/layout/layout.html" %}
+
+{% block title %}Ajax test{% endblock %}
+
+{% block body %}
+    <script>
+        $(document).ready(function () {
+            function success(position) {
+                const latitude  = position.coords.latitude;
+                const longitude = position.coords.longitude;
+
+                // do something
+                $.post("{% url 'ajax_test' %}", {csrfmiddlewaretoken: "{{ csrf_token }}", latitude:latitude, longitude:longitude});
+                
+                /*
+                $.post("{% url 'ajax_test' %}", {csrfmiddlewaretoken: "{{ csrf_token }}", latitude:latitude, longitude:longitude}, function(response){
+                    // do something
+                });
+                */
+
+               /* 
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'ajax_test' %}",
+                    dataType: "json",
+                    data: JSON.stringify({csrfmiddlewaretoken: "{{ csrf_token }}", latitude:latitude, longitude:longitude}),
+                    contentType: "application/json",
+                    success: function (data) {
+                        // do something
+                    },
+                    error: function (error) {
+                        // do something
+                    }
+                });*/
+            }
+
+            function error() {
+                // Sorry, no position available.
+            }
+
+            const options = {
+                enableHighAccuracy: true,
+                maximumAge: 30000,
+                timeout: 27000
+            };
+
+            const watchID = navigator.geolocation.getCurrentPosition(success, error, options);
+        });
+    </script>
+{% endblock %}
