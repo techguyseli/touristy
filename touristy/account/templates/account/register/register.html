@@ -14,7 +14,7 @@
     <h1 class="h3 mb-4 font-weight-normal">Create a touristy account</h1>
     <form action="{% url 'register' %}" method="post" class="w-75 mx-auto">
         {% csrf_token %}
-        <input type="username" name="username" class="form-control mb-3" placeholder="Username" minlength="8" required autofocus> 
+        <input type="username" name="username" class="form-control mb-3" placeholder="Username" minlength="5" required autofocus> 
         <input type="password" name="password" id="password" class="form-control mb-3" placeholder="Password" minlength="8" required autofocus>  
         <input type="password" name="password_repeat" id="password_repeat" class="form-control mb-3" placeholder="Repeat password" minlength="8" required autofocus oninput="validateForm()">
         <div id="pass_rep_warn" class="alert alert-light" role="alert">
