@@ -1,11 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as dj_login
 from django.contrib.auth.models import User
-from django.http import HttpResponse
 
 from .forms import RegisterUserForm
-
-# check_password(plaintext, hashed)
 
 # Create your views here.
 def login(request):
@@ -34,19 +31,20 @@ def register(request):
             form_password_repeat = form.cleaned_data['password_repeat']
 
             # validate passwords matching
-            if form_password != form_password_repeat:
+            if not form.passwords_match():
                 return render(request, "account/register/register.html", {
-                    "message" : "Password and password confirmation do not match, please try again."
+                    "message" : "Password and password confirmation did not match, please try again."
                 })
 
             # validate username existance
-            if User.objects.filter(username=form_username).first() is not None:
+            user = User.objects.filter(username=form_username).first()
+            if user is not None:
                 return render(request, "account/register/register.html", {
-                    "message" : "Username already exists, please try again."
+                    "message" : "Username already exists, please try another one."
                 })
 
             # if all good, add user and redirect to login
-            user = User.objects.create_user(username=form_username, password=form_password)
+            User.objects.create_user(username=form_username, password=form_password)
             return redirect("login")
 
         return render(request, "account/register/register.html", {
