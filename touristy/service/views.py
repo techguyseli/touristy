@@ -7,10 +7,8 @@ from django.http import JsonResponse
 #@login_required(login_url='/account/login/')
 
 def nearby(request):
-    user = request.user.is_authenticated
-    logout(request)
     return render(request, 'service/nearby/nearby.html', {
-        "user" : user
+        "user" : request.user.is_authenticated
     })
 
 def ajax_test(request):
