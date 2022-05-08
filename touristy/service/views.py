@@ -18,4 +18,6 @@ def ajax_test(request):
             'longitude': request.POST.get('longitude')
         }
         return JsonResponse(response)
-    return render(request, "service/ajax_test/ajax_test.html")
+    return render(request, "service/ajax_test/ajax_test.html", {
+        "method": request.method
+    })

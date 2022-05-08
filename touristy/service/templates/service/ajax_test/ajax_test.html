@@ -1,8 +1,11 @@
 {% extends "service/layout/layout.html" %}
 
-{% block title %}Ajax test{% endblock %}
+{% block title %}
+    Ajax test
+{% endblock %}
 
 {% block body %}
+    {{ request.method }}
     <script>
         $(document).ready(function () {
             function success(position) {
