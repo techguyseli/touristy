@@ -15,7 +15,7 @@ def nearby(request):
 
         user_latitude = request.POST.get('latitude')
         user_longitude = request.POST.get('longitude')
-        
+
         max_latitude = user_latitude + max_distnace
         min_latitude = user_latitude - max_distnace
         max_longitude = user_longitude + max_distnace
@@ -23,9 +23,7 @@ def nearby(request):
 
         services = Service.objects.filter(latitude__gte=min_latitude, latitude__lte=max_latitude, longitude__gte=min_longitude, longitude__lte=max_longitude)
     
-    return render(request, 'service/nearby/get_coordinates.html', {
-        "services" : services
-    })
+    return render(request, 'service/nearby/get_coordinates.html')
 
 def ajax_test(request):
     if request.method == 'POST':
