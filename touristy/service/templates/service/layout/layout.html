@@ -13,12 +13,86 @@
 </head>
 <body>
     <!--navbar with: Home, Nearby, Map, About us, DTL block of account that's empty-->
+    <header id="navbar" class="fixed-top">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+              <a class="navbar-brand" href="#">Touristy</a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
+                <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Nearby</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Map</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">About Us</a>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Account
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <li><a class="dropdown-item" href="#">Settings</a></li>
+                      <li><a class="dropdown-item" href="#">Logout</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </nav>
+    </header>
     <script src="{% static 'service/script/jquery.min.js' %}"></script>
     <div>
         {% block body %}{% endblock %}
     </div>
-    <footer>
-        <!--fill grey and with these info https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fd3h2k7ug3o5pb3.cloudfront.net%2Fimage%2F2020-01-17%2Fc4242720-38d3-11ea-a3fb-cfc55c1973d0.png&f=1&nofb=1-->
-    </footer>
+    <section class="footer">
+        <ul class="list">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Nearby</a></li>
+            <li><a href="#">Maps</a></li>
+            <li><a href="#">About us</a></li>
+            <li><a href="#">Account</a></li>
+        </ul>
+        <p class="copyright"> © Copyright Touristy 2022.</p>
+    </section>
+    <style>
+        .footer{
+            padding:40px 0;
+            background: #fff;
+        }
+        .footer ul {
+          margin-top:0;
+          padding:0;
+          list-style: none;
+          font-size:18px;
+          line-height: 1.6;
+          margin-bottom:0;
+          text-align:center;
+        }
+        .footer ul li a {
+          color: inherit;
+          text-decoration: none;
+          opacity:0.8;
+        }
+        .footer ul li{
+            display: inline-block;
+            padding: 0 15px;
+        }
+        .footer ul li a:hover{
+          opacity: 1;
+        }
+        .footer .copyright{
+          margin-top:15px;
+          text-align: center;
+          font-size: 13px;
+        }
+    </style>
 </body>
 </html>
