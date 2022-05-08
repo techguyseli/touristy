@@ -9,7 +9,7 @@ class Service(models.Model):
     longitude = models.DecimalField(max_digits=20, decimal_places=17)
     title = models.CharField(max_length=40)
     type = models.CharField(max_length=20)
-    adress = models.CharField(max_length=60)
+    # constraints
     class Meta:
         unique_together = ['latitude', 'longitude', 'title']
 
