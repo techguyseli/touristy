@@ -7,6 +7,9 @@ from django.contrib.auth.models import User
 
 #@login_required(login_url='/account/login/')
 
+def home(request):
+    return render(request, "service/home/home.html")
+
 def nearby(request):
     if request.method == 'POST':
         user_latitude = float(request.POST.get('latitude'))
