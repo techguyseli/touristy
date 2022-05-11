@@ -7,7 +7,7 @@ class Service(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='services')
     latitude = models.DecimalField(max_digits=20, decimal_places=17)
     longitude = models.DecimalField(max_digits=20, decimal_places=17)
-    title = models.CharField(max_length=40)
+    title = models.CharField(max_length=60)
     type = models.CharField(max_length=20)
     # constraints
     class Meta:
