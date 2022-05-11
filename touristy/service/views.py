@@ -15,7 +15,6 @@ def nearby(request):
         user_latitude = float(request.POST.get('latitude'))
         user_longitude = float(request.POST.get('longitude'))
 
-        # equivilant to 6 km
         max_distnace = 0.035
 
         max_latitude = user_latitude + max_distnace
