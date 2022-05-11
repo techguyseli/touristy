@@ -36,7 +36,6 @@ Service : -latitude
 Service : -longitude
 Service : -type
 Service : -title
-Service : -address
 Service "1" -- "*" Image : have
 
 class Image

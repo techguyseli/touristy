@@ -1,12 +1,50 @@
 {% extends "service/layout/layout.html" %}
 
-{% block title %}Nearby{% endblock %}
+{% block title %}Nearby services{% endblock %}
 
 {% block body %}
 {% if message %}
-<div class="alert alert-warning" role="alert">
-    {{ message }}
-</div>
+  <div class="alert alert-warning" role="alert">
+      {{ message }}
+  </div>
 {% endif %}
-    Nearby
+    <main>
+    <section class="py-5 text-center container">
+      <div class="row py-lg-5">
+        <div class="col-lg-6 col-md-8 mx-auto">
+          <h1 class="fw-light">Nearby services</h1>
+        </div>
+      </div>
+    </section>
+  
+    <div class="album py-5 bg-light">
+      <div class="container">
+        {% if not services %}
+          <div class="alert alert-warning" role="alert">
+            There are no services in your area.
+          </div>
+        {% else %}
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            {% for service in services %}
+              <div class="col">
+                <div class="card shadow-sm">
+                  <img src="{{ service.thumbnail }}" class="card-img-top" alt="Thumbnail">
+                  <div class="card-body">
+                    <p class="card-text">{{ service.title }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+                      </div>
+                      <small>{{ service.type | title }}</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+      </div>
+    </div>
+  
+  </main>
 {% endblock %}
