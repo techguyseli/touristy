@@ -34,7 +34,12 @@
                     <a class="nav-link active" aria-current="page" href="#">Home</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'nearby' %}">Nearby</a>
+                    <form id="coordinates" action="{% url 'nearby' %}" method="post" hidden>
+                      {% csrf_token %}
+                      <input type="hidden" name="longitude" id="longitude" value="">
+                      <input type="hidden" name="latitude" id="latitude" value="">
+                    </form>
+                    <a class="nav-link" href="#" onclick="sendForm()">Nearby</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="#">Map</a>
@@ -65,7 +70,33 @@
             </div>
           </nav>
     </header>
-    <script src="{% static 'service/script/jquery.min.js' %}"></script>
+    <div class="alert alert-warning" id="coordinatesWarning" role="alert" hidden>
+      There have been some error fetching your coordinates, please refresh this page and try again.
+    </div>
+    <script>
+      function sendForm(){
+        var options = {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0
+        };
+
+        function success(pos) {
+          var crd = pos.coords;
+
+          document.getElementById("latitude").value = crd.latitude;
+          document.getElementById("longitude").value = crd.longitude
+
+          document.getElementById("coordinates").submit()
+        }
+
+        function error(err) {
+          document.getElementById("coordinatesWarning").removeAttribute("hidden")
+        }
+
+        navigator.geolocation.getCurrentPosition(success, error, options);
+      }
+    </script>
     <div>
         {% block body %}{% endblock %}
     </div>
