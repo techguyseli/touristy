@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login as dj_login
+from django.contrib.auth import authenticate, login as dj_login, logout as dj_logout
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 from .forms import RegisterUserForm
 
@@ -19,6 +20,10 @@ def login(request):
                 "message" : "Wrong username or password!"
             })
     return render(request, "account/login/login.html")
+
+def logout(request):
+    dj_logout(request)
+    return redirect(reverse('nearby'))
 
 def register(request):
     if request.method == 'POST':
