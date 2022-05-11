@@ -1,11 +1,7 @@
 from django.shortcuts import render
-from django.contrib.auth import logout
-from django.http import JsonResponse, HttpResponse
-from django.db.models import Q
-from math import fabs
+from django.http import HttpResponse
 from .models import Service, Image
 from django.contrib.auth.models import User
-import csv
 
 # Create your views here.
 
@@ -13,10 +9,10 @@ import csv
 
 def nearby(request):
     if request.method == 'POST':
-        max_distnace = 0.00021350989013413368
+        user_latitude = float(request.POST.get('latitude'))
+        user_longitude = float(request.POST.get('longitude'))
 
-        user_latitude = request.POST.get('latitude')
-        user_longitude = request.POST.get('longitude')
+        max_distnace = 0.00021350989013413368
 
         max_latitude = user_latitude + max_distnace
         min_latitude = user_latitude - max_distnace
@@ -24,19 +20,10 @@ def nearby(request):
         min_longitude = user_longitude - max_distnace
 
         services = Service.objects.filter(latitude__gte=min_latitude, latitude__lte=max_latitude, longitude__gte=min_longitude, longitude__lte=max_longitude)
-    
-    return render(request, 'service/nearby/get_coordinates.html')
 
-def ajax_test(request):
-    if request.method == 'POST':
-        response = {
-            'latitude': request.POST.get('latitude'),
-            'longitude': request.POST.get('longitude')
-        }
-        return JsonResponse(response)
-    return render(request, "service/ajax_test/ajax_test.html", {
-        "method": request.method
-    })
+        return render(request, 'service/nearby/nearby.html', {
+            "services" : services
+        })
 
 def db_insert(request):
     services_str = "480527,33.98927,-6.85782,Rabat Old Town,attraction\n23381885,33.99496,-6.845122,Hotel Villa ARALIA 5 Etoiles,hotel\n10329162,33.989502,-6.848308,Sushi house,restaurant\n20291274,33.97446,-6.84543,Hassan II Bridge Pont Hassan II,attraction\n21369609,33.996193,-6.847702,Gardenia Boutique Hotel,hotel\n3750728,33.989887,-6.837528,Golden Fish,restaurant\n9803298,34.005466,-6.814107,Tramway Rabat-Salé,attraction\n23287818,33.993706,-6.848783,Flower Town Hotel & Spa,hotel\n8726921,33.98801,-6.85153,Le Puzzle,restaurant\n4043308,34.01518,-6.833171,Museum Mohamed VI of Modern and Contemporary Art,attraction\n5279899,33.996456,-6.847468,Hotel Atlantic Agdal,hotel\n4339498,33.98952,-6.848303,Paul,restaurant\n12907153,33.970673,-6.84688,Abla Ababou Galerie,attraction\n531012,33.964413,-6.847324,Villa Mandarine,hotel\n13189067,33.989662,-6.848304,Coffeeshop Company,restaurant\n10020444,33.992348,-6.835968,Mawazine Festival,attraction\n300677,33.99032,-6.837712,Hotel Sofitel Rabat Jardin des Roses,hotel\n6210608,33.98799,-6.8535,Don Pino,restaurant\n4782455,33.99022,-6.81945,Cathedrale Saint-Pierre,attraction\n303081,33.99547,-6.851161,Soundouss Hotel,hotel\n12925934,33.98941,-6.8505,Domino's Pizza,restaurant\n1972315,34.00061,-6.84494,Valley of the Roses,attraction\n17789665,33.97593,-6.8616,Riad Najiba,hotel\n3750724,33.9898,-6.837535,Al Warda,restaurant\n481103,34.005524,-6.833678,Royal Palace of Rabat,attraction\n299645,34.001,-6.855458,Ibis Rabat Agdal,hotel\n8604706,33.989834,-6.837442,Amber Bar,restaurant\n20261071,33.97419,-6.82989,Label' Gallery Rabat,attraction\n23338842,33.998642,-6.84512,First Suites Hotel,hotel\n9459651,33.98982,-6.837544,So Lounge Rabat,restaurant\n"
