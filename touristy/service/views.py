@@ -4,11 +4,12 @@ from .models import Service, Image
 from django.contrib.auth.models import User
 
 # Create your views here.
-
 #@login_required(login_url='/account/login/')
-
 def home(request):
     return render(request, "service/home/home.html")
+
+def map(request):
+    return render(request, 'service/map/map.html')
 
 def nearby(request):
     if request.method == 'POST':

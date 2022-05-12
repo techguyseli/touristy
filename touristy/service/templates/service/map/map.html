@@ -1,0 +1,15 @@
+{% extends "service/layout/layout.html" %}
+
+{% block title %}
+    Map
+{% endblock %}
+
+{% block body %}
+    put a map for the user to select a place, use leaflet.js.
+
+    put a form that has 2 hidden inputs for latitude and longitude and a visible submit input to the form.
+
+    the two hidden inputs values get updated each time the user selects a point on the map.
+
+    on submit, submit the form to this link: {% url 'nearby' %}
+{% endblock %}
