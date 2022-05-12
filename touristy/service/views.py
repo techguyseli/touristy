@@ -16,7 +16,7 @@ def nearby(request):
         user_latitude = float(request.POST.get('latitude'))
         user_longitude = float(request.POST.get('longitude'))
 
-        max_distnace = 0.035
+        max_distnace = 0.019
 
         max_latitude = user_latitude + max_distnace
         min_latitude = user_latitude - max_distnace
@@ -26,7 +26,9 @@ def nearby(request):
         services = Service.objects.filter(latitude__gte=min_latitude, latitude__lte=max_latitude, longitude__gte=min_longitude, longitude__lte=max_longitude)
 
         for service in services:
-            service.thumbnail = service.images.all()[0].url
+            images = service.images.all()
+            if images:
+                service.thumbnail = images[0].url
 
         return render(request, 'service/nearby/nearby.html', {
             "services" : services
