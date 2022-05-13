@@ -5,11 +5,72 @@
 {% endblock %}
 
 {% block body %}
-    put a map for the user to select a place, use leaflet.js.
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+    integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
+    crossorigin=""/>
+    <style>
+        @media screen and (min-width: 810px) {
+            #map { 
+                width: 780px;
+                height: 500px;
+            }
+        }
+        @media screen and (max-width: 809px){
+            #map { 
+                width: 780px;
+                height: 500px;
+            }
+        }
+        @media screen and (max-width: 600px){
+            #map { 
+                width: 570px;
+                height: 500px;
+            }
+        }
+        @media screen and (max-width: 412px){
+            #map { 
+                width: 385px;
+                height: 500px;
+            }
+        }
+        @media screen and (max-width: 320px){
+            #map {
+                width: 280px;
+                height: 500px;
+            }
+        }
+        
+        
+        
+    </style>
 
-    put a form that has 2 hidden inputs for latitude and longitude and a visible submit input to the form.
+    <div id="map"></div>
+    
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
+    integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
+    crossorigin=""></script>
 
-    the two hidden inputs values get updated each time the user selects a point on the map.
+    <script>
+        var map = L.map('map').setView([33.96919901215576, -6.842159378465117], 13);
 
-    on submit, submit the form to this link: {% url 'nearby' %}
+        L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            maxZoom: 18,
+            id: 'mapbox/streets-v11',
+            tileSize: 512,
+            zoomOffset: -1,
+            accessToken: 'pk.eyJ1Ijoic29tZW9uZWJyb29oIiwiYSI6ImNsMzMyejdsazFjeDIzY3BzMGs0cmwzeHgifQ.NTCc3npvCl0F-tieh_fraw'
+        }).addTo(map);
+
+        var popup = L.popup();
+
+        function onMapClick(e) {
+            popup
+                .setLatLng(e.latlng)
+                .setContent("<form action=''> <input type='submit' value='Get nearby services'> </form>")
+                .openOn(map);
+        }
+
+        map.on('click', onMapClick);
+    </script>
 {% endblock %}
