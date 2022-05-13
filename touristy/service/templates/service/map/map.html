@@ -9,39 +9,14 @@
     integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
     crossorigin=""/>
     <style>
-        @media screen and (min-width: 810px) {
-            #map { 
-                width: 780px;
-                height: 500px;
-            }
+        #map {
+            position: absolute;
+            float: left;
+            top: 8%;
+            height: 100%;
+            width: 100%;
+            z-index: 1;
         }
-        @media screen and (max-width: 809px){
-            #map { 
-                width: 780px;
-                height: 500px;
-            }
-        }
-        @media screen and (max-width: 600px){
-            #map { 
-                width: 570px;
-                height: 500px;
-            }
-        }
-        @media screen and (max-width: 412px){
-            #map { 
-                width: 385px;
-                height: 500px;
-            }
-        }
-        @media screen and (max-width: 320px){
-            #map {
-                width: 280px;
-                height: 500px;
-            }
-        }
-        
-        
-        
     </style>
 
     <div id="map"></div>
@@ -67,10 +42,19 @@
         function onMapClick(e) {
             popup
                 .setLatLng(e.latlng)
-                .setContent("<form action=''> <input type='submit' value='Get nearby services'> </form>")
+                .setContent("<button type='button' class='btn btn-dark' onclick='onSubmitClick()'>Checkout services</button>")
                 .openOn(map);
+
+            document.getElementById("latitude").value = e.latlng.lat.toString();
+            document.getElementById("longitude").value = e.latlng.lng.toString();
         }
 
         map.on('click', onMapClick);
+
+        function onSubmitClick(){
+            console.log(document.getElementById("longitude").value)
+            console.log(document.getElementById("latitude").value)
+            document.getElementById("coordinates").submit()
+        }
     </script>
 {% endblock %}
