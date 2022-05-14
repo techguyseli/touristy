@@ -1,0 +1,23 @@
+{% extends "service/layout/layout.html" %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block body %}
+    {% if not service %}
+        <div class="alert alert-warning" role="alert">
+            No such service.
+        </div>
+    {% else %}
+        afficher les info d service <br>
+        
+        {% if request.user.is_authenticated %}
+                ajouti favoris <br>
+
+            {% if userOwnsService %}
+                ajouti botona d modifyi hna, had condition kaykon True lakan had 
+                service d user, donc ymknlih ymodifyih, eliha khas t ajouti botona 
+                d modifyi
+            {% endif %}
+        {% endif %}
+    {% endif %}
+{% endblock %}
