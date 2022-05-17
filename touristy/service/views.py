@@ -1,10 +1,19 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Service, Image
+from account.models import Favorite
 from django.contrib.auth.models import User
 
 # Create your views here.
-#@login_required(login_url='/account/login/')
+"""
+@login_required(login_url='/account/login/')
+def add_favourite(request):
+    if request.method == "POST":
+        service_id = int(request.POST.get("service_id"))
+        service = Service.objects.get(pk=service_id)
+        if service not in request.user.favorites.all():
+"""
+
 def home(request):
     return render(request, "service/home/home.html")
 
