@@ -3,6 +3,11 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block body %}
+{% if msg %}
+<div class="alert alert-warning" role="alert">
+  {{ msg }}
+</div>
+{% endif %}
   {% if not service %}
       <div class="alert alert-warning" role="alert">
           No such service.
@@ -45,7 +50,7 @@
               {% if favourited %}
                 <button type="button" class="btn btn-primary">Remove from favorites</button>
               {% else %}
-                <form action="{% url 'add_favourite' %}" method="post" class="m-1">
+                <form action="{% url 'add_favourite' %}" method="post" class="my-1">
                   {% csrf_token %}
                   <input type="hidden" name="service_id" value="{{ service.id }}">
                   <input type="submit" class="btn btn-primary" value="Add to favourites">
@@ -53,7 +58,7 @@
               {% endif %}
 
               {% if userOwnsService %}
-              <form action="{% url 'edit_service' %}" method="post" class="m-1">
+              <form action="{% url 'edit_service' %}" method="post" class="my-1">
                 {% csrf_token %}
                 <input type="hidden" value="{{ service.id }}">
                 <input type="submit" class="btn btn-primary" value="Edit">
@@ -64,20 +69,39 @@
             {% if not service_rated %}
               <hr>
               <h1>Rate this service</h1>
-              <input type="range" class="form-range w-25" min="1" max="5" id="customRange2">
-              <div class="form-floating mb-4">
-                <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
-                <label for="floatingTextarea2">Comments</label>
-              </div>
-              <div class="d-grid gap-2 d-md-block">
-                <button class="btn btn-primary" type="button">Post</button>
-              </div>
+              <form action="{% url 'add_rating' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="service_id" value="{{ service.id }}">
+                <input name="stars" type="range" class="form-range w-25" min="1" max="5" id="customRange2">
+                <div class="form-floating mb-4">
+                  <textarea name="comment" class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                  <label for="floatingTextarea2">Comment</label>
+                </div>
+                <div class="d-grid gap-2 d-md-block">
+                  <input type="submit" class="btn btn-primary" value="Post">
+                </div>
+              </form>
             {% endif %}
           {% endif %}
           <hr>
           {% if ratings %}
+            <h1>Ratings</h1>
             {% for rating in ratings %}
-              <h1>Ratings</h1>
+              <div class="border rounded m-2 p-2">
+                <h3>{{ rating.user.username }}</h3>
+                <div class="progress m-3">
+                  <div class="progress-bar" role="progressbar" style="width: {{ rating.percentage }}%" aria-valuenow="{{ rating.percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>                
+                <textarea class="form-control" id="floatingTextarea2" style="height: 100px" disabled>{{ rating.comment_str }}</textarea>
+                {% if rating.userRating %}
+                  <form action="{% url 'remove_rating' %}" method="post" class="my-2">
+                    {% csrf_token %}
+                    <input type="hidden" name="service_id" value="{{ service.id }}">
+                    <input type="hidden" name="rating_id" value="{{ rating.id }}">
+                    <input type="submit" class="btn btn-primary" value="Delete">
+                  </form>
+                {% endif %}
+              </div>
             {% endfor %}
           {% else %}
             <h1>This service is not rated yet.</h1>

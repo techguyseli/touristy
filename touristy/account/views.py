@@ -6,8 +6,8 @@ from django.contrib.auth.decorators import login_required
 from service.models import *
 from .models import *
 from datetime import datetime
-
 from .forms import RegisterUserForm
+
 
 # Create your views here.
 @login_required(login_url='/account/login/')
@@ -51,7 +51,7 @@ def login(request):
     # code here, in case successful login, redirect to service/nearby route
     if request.method == 'POST':
         form_username = request.POST.get('username')
-        form_password =request.POST.get('password')
+        form_password = request.POST.get('password')
         user = authenticate(request, username=form_username, password=form_password)
         if user is not None:
             dj_login(request, user)
@@ -67,6 +67,40 @@ def login(request):
 def logout(request):
     dj_logout(request)
     return redirect(reverse('nearby'))
+
+
+@login_required(login_url='/account/login/')
+def add_rating(request):
+    if request.method == 'POST':
+        stars = int(request.POST.get('stars'))
+
+        if stars < 0 or stars > 5:
+            return redirect("service_info", service_id=service_id)
+
+        service_id = int(request.POST.get('service_id'))
+        service = Service.objects.get(pk=service_id)
+        comment = request.POST.get('comment')
+
+        existing_rating = Rating.objects.filter(user=request.user, service=service)
+        if existing_rating:
+            return redirect("service_info", service_id=service_id, msg="Can't rate a service multiple times.")
+
+        r = Rating(user=request.user, service=service, stars=stars, comment_str=comment)
+        r.save()
+
+    return redirect("service_info", service_id=service_id)
+    
+
+@login_required(login_url='/account/login/')
+def remove_rating(request):
+    service_id = int(request.POST.get('service_id'))
+
+    if request.method == 'POST':
+        rating_id = int(request.POST.get('rating_id'))
+        r = Rating.objects.get(pk=rating_id, user=request.user)
+        r.delete()
+
+    return redirect("service_info", service_id=service_id)
 
 
 def register(request):

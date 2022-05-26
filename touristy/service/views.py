@@ -14,16 +14,14 @@ def map(request):
     return render(request, 'service/map/map.html')
 
 
-def service_info(request, service_id):
-    # zid had 2
-    # "ratings" : ratings,
-    # "favourited" : favourited
+def service_info(request, service_id, msg=None):
     service = None
     userOwnsService = False
     page_title = None
     images = None
     ratings = None
     favourited = False
+    service_rated = False
 
     try:
         service = Service.objects.get(pk=service_id)
@@ -34,6 +32,12 @@ def service_info(request, service_id):
         images = service.images.all()
         page_title = service.title
         ratings = service.ratings.all()
+        for rating in ratings:
+            rating.percentage = int(rating.stars * 20)
+            rating.userRating = False
+            if request.user == rating.user:
+                service_rated = True
+                rating.userRating = True
 
     if service and request.user.is_authenticated and request.user.pk == service.user.pk:
         userOwnsService = True
@@ -47,7 +51,9 @@ def service_info(request, service_id):
         "page_title" : page_title,
         "images" : images,
         "ratings" : ratings,
-        "favourited" : favourited
+        "favourited" : favourited,
+        "msg" : msg,
+        "service_rated" : service_rated
     })
 
 
