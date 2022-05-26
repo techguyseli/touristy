@@ -1,0 +1,41 @@
+{% extends "service/layout/layout.html" %}
+
+{% block title %}
+    Favorites
+{% endblock %}
+
+{% block body %}
+    {% if not favorites %}
+        <div class="alert alert-warning" role="alert">
+            You don't have any favorites.
+        </div>
+    {% else %}
+        <div class="album py-5 bg-light">
+            <div class="container">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                    {% for fav in favorites %}
+                        <div class="col">
+                            <div class="card shadow-sm">
+                            <img src="{{ fav.service.thumbnail }}" class="card-img-top img-thumbnail" alt="Thumbnail">
+                            <div class="card-body">
+                                <p class="card-text">{{ fav.service.title }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="btn-group mx-4">
+                                        <a class="mx-1" href="{% url 'service_info' fav.service.id %}"><button type="button" class="btn btn-sm btn-outline-secondary">View</button></a>
+                                        <a href="{% url 'remove_favorite' fav.id %}"><button type="button" class="btn btn-sm btn-outline-secondary">Remove</button></a>
+                                    </div>
+                                    <div>
+                                        <small>{{ fav.service.type | title }}</small> <br>
+                                        <small>Added to favorites {{ fav.add_date }}</small>
+                                    </div>
+                                
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

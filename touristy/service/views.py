@@ -1,18 +1,10 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Service, Image
-from account.models import Favorite
+from account.models import Favorite, Rating
 from django.contrib.auth.models import User
 
 # Create your views here.
-"""
-@login_required(login_url='/account/login/')
-def add_favourite(request):
-    if request.method == "POST":
-        service_id = int(request.POST.get("service_id"))
-        service = Service.objects.get(pk=service_id)
-        if service not in request.user.favorites.all():
-"""
 
 def home(request):
     return render(request, "service/home/home.html")
@@ -23,26 +15,39 @@ def map(request):
 
 
 def service_info(request, service_id):
+    # zid had 2
+    # "ratings" : ratings,
+    # "favourited" : favourited
     service = None
     userOwnsService = False
+    page_title = None
+    images = None
+    ratings = None
+    favourited = False
 
     try:
         service = Service.objects.get(pk=service_id)
     except:
-        return render(request, "service/service_info/service_info.html", {
-            "service" : None,
-            "userOwnsService" : False,
-            "page_title" : "No service"
-        })
-    
+        page_title = "No service"
+
+    if service:
+        images = service.images.all()
+        page_title = service.title
+        ratings = service.ratings.all()
 
     if service and request.user.is_authenticated and request.user.pk == service.user.pk:
         userOwnsService = True
-    
+        favourite = service.favorites.filter(user=request.user)
+        if favourite:
+            favourited = True
+
     return render(request, "service/service_info/service_info.html", {
         "service" : service,
         "userOwnsService" : userOwnsService,
-        "page_title" : service.title
+        "page_title" : page_title,
+        "images" : images,
+        "ratings" : ratings,
+        "favourited" : favourited
     })
 
 

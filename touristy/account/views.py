@@ -1,11 +1,52 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth import authenticate, login as dj_login, logout as dj_logout
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from service.models import *
+from .models import *
+from datetime import datetime
 
 from .forms import RegisterUserForm
 
 # Create your views here.
+@login_required(login_url='/account/login/')
+def add_favourite(request):
+    if request.method == "POST":
+        service_id = int(request.POST.get("service_id"))
+        service = Service.objects.get(pk=service_id)
+        if service not in request.user.favorites.all():
+            f = Favorite(user=request.user, service=service, add_date=datetime.now())
+            f.save()
+        return redirect('service_info', service_id=service_id)
+    return redirect('favorites_info')
+
+
+@login_required(login_url='/account/login/')
+def favorites_info(request):
+    favorites = Favorite.objects.filter(user=request.user)
+    for fav in favorites:
+        images = fav.service.images.all()
+        if images:
+            fav.service.thumbnail = images[0].url
+    return render(request, 'account/favorites/favorites_info.html', {
+        "favorites" : favorites
+    })
+
+
+@login_required(login_url='/account/login/')
+def edit_service(request):
+    return HttpResponse('hvjbkjnl,')
+
+
+@login_required(login_url='/account/login/')
+def remove_favorite(request, fav_id):
+    f = Favorite.objects.filter(pk=int(fav_id), user=request.user).first()
+    if f:
+        f.delete()
+    return redirect('favorites_info')
+
+
 def login(request):
     # code here, in case successful login, redirect to service/nearby route
     if request.method == 'POST':
@@ -21,9 +62,12 @@ def login(request):
             })
     return render(request, "account/login/login.html")
 
+
+@login_required(login_url='/account/login/')
 def logout(request):
     dj_logout(request)
     return redirect(reverse('nearby'))
+
 
 def register(request):
     if request.method == 'POST':

@@ -20,19 +20,3 @@ class Rating(models.Model):
         constraints = [
             models.CheckConstraint(check=(models.Q(stars__gte=0) & models.Q(stars__lte=5)), name='stars_gte_0_lte_5'),
         ]
-
-class Plan(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='plans')
-    title = models.CharField(max_length=30)
-    description = models.CharField(max_length=100)
-    start_date = models.DateField(auto_now=False, auto_now_add=False)
-    end_date = models.DateField(auto_now=False, auto_now_add=False)
-    class Meta:
-        unique_together = ['title', 'user']
-
-class Stop(models.Model):
-    plan = models.ForeignKey(Plan, on_delete=models.CASCADE, related_name='stops')
-    service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name='stops')
-    stop_datetime = models.DateTimeField(auto_now=False, auto_now_add=False)
-    class Meta:
-        unique_together = ['plan', 'service', 'stop_datetime']
