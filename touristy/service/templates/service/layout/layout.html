@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{% static 'service/style/bootstrap.min.css' %}">
     <title>{% block title %}{% endblock %}</title>
 </head>
-<body>
+<body {% block home_style %}{% endblock %}>
     <header id="navbar" class="sticky-top">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
@@ -38,21 +38,20 @@
                   </li>
                 </ul>
                 <ul class="navbar-nav mb-2 mb-lg-0">
-                  <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      Account
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      {% if request.user.is_authenticated %}
+                  {% if request.user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ request.user.username }}
+                      </a>
+                      <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="{% url 'favorites_info' %}">Favorites</a></li>
-                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                        <li><a class="dropdown-item" href="{% url 'account_settings' %}">Settings</a></li>
                         <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-                      {% else %}
-                        <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>
-                        <li><a class="dropdown-item" href="{% url 'register' %}">Register</a></li>
-                      {% endif %}
-                    </ul>
-                  </li>
+                      </ul>
+                  {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
+                  {% endif %}
                 </ul>
               </div>
             </div>

@@ -119,7 +119,7 @@ def db_insert(request):
             if service["service_id"] == image["service_id"]:
                 service["images"].append(image["url"])
     
-    u = User.objects.get(username="admin")
+    u = User.objects.get(username="adminadmin")
     for service in services[:2]:
         s = Service(user=u, latitude=float(service["latitude"]), longitude=float(service['longitude']), title=service["title"], type=service["type"])
         s.save()

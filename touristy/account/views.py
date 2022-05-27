@@ -6,10 +6,82 @@ from django.contrib.auth.decorators import login_required
 from service.models import *
 from .models import *
 from datetime import datetime
-from .forms import RegisterUserForm
+from .forms import *
+from django.contrib.auth.hashers import PBKDF2PasswordHasher
 
 
-# Create your views here.
+@login_required(login_url='/account/login/')
+def delete_account(request):
+    user = request.user
+    dj_logout(request)
+    user.delete()
+    return redirect(reverse('nearby'))
+
+
+@login_required(login_url='/account/login/')
+def account_settings(request):
+    if request.method == 'POST':
+        form1 = ChangeUsernameForm(request.POST)
+        form2 = ChangePasswordForm(request.POST)
+
+        # validate form
+        if form1.is_valid():
+            form_username = form1.cleaned_data['username']
+
+            # validate username existance
+            user = User.objects.filter(username=form_username).first()
+            if user is not None:
+                return render(request, "account/account_settings/account_settings.html", {
+                    "message" : "Username already exists, please try another one."
+                })
+
+            request.user.username = form_username
+            request.user.save(update_fields=['username'])
+            return render(request, "account/account_settings/account_settings.html", {
+                "message" : None
+            })
+
+        if form2.is_valid():
+            form_old_password = form2.cleaned_data['old_password']
+            form_new_password = form2.cleaned_data['new_password']
+            form_password_repeat = form2.cleaned_data['password_repeat']
+
+            user = authenticate(request, username=request.user.username, password=form_old_password)
+            if user is None:
+                return render(request, "account/account_settings/account_settings.html", {
+                    "message" : "Invalid current password."
+                })
+
+            # check if password changed
+            if not form2.password_changed():
+                return render(request, "account/account_settings/account_settings.html", {
+                    "message" : "Password didn't change, please try again."
+                })
+            
+            # validate new password and confirmation matching
+            if not form2.new_passwords_match():
+                return render(request, "account/account_settings/account_settings.html", {
+                    "message" : "New password and its confirmation did not match, please try again."
+                })
+
+            hasher = PBKDF2PasswordHasher()
+            algorithm, salt, hashh = request.user.password.split('$', 2)
+            request.user.password = hasher.encode(form_new_password, salt)
+            request.user.save(update_fields=['password'])
+
+            return render(request, "account/account_settings/account_settings.html", {
+                "message" : None
+            })
+
+        return render(request, "account/account_settings/account_settings.html", {
+            "message" : "The form you submitted is invalid, please try again."
+        })
+        
+    return render(request, "account/account_settings/account_settings.html", {
+        "message" : None
+    })
+
+
 @login_required(login_url='/account/login/')
 def add_favourite(request):
     if request.method == "POST":
@@ -48,19 +120,20 @@ def remove_favorite(request, fav_id):
 
 
 def login(request):
-    # code here, in case successful login, redirect to service/nearby route
-    if request.method == 'POST':
-        form_username = request.POST.get('username')
-        form_password = request.POST.get('password')
-        user = authenticate(request, username=form_username, password=form_password)
-        if user is not None:
-            dj_login(request, user)
-            return redirect("nearby")
-        else:
-            return render(request, "account/login/login.html", {
-                "message" : "Wrong username or password!"
-            })
-    return render(request, "account/login/login.html")
+    if not request.user.is_authenticated:
+        # code here, in case successful login, redirect to service/nearby route
+        if request.method == 'POST':
+            form_username = request.POST.get('username')
+            form_password = request.POST.get('password')
+            user = authenticate(request, username=form_username, password=form_password)
+            if user is not None:
+                dj_login(request, user)
+                return redirect("nearby")
+            else:
+                return render(request, "account/login/login.html", {
+                    "message" : "Wrong username or password!"
+                })
+        return render(request, "account/login/login.html")
 
 
 @login_required(login_url='/account/login/')

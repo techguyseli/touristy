@@ -1,0 +1,59 @@
+{% extends 'service/layout/layout.html' %}
+
+
+{% block title %}
+Account
+{% endblock %}
+
+
+{% block body %}
+{% if message %}
+<div class="alert alert-warning" role="alert">
+    {{ message }}
+</div>
+{% endif %}
+<div class="row">
+    <div class="col m-5">
+        <h1 class="h3 mb-4 font-weight-normal">Modify username</h1>
+        <form action="{% url 'account_settings' %}" id="username_form" method="post" class="w-100 mx-auto mb-5" onsubmit="return confirm('Are you sure you want to change your username?');">
+            {% csrf_token %}
+            <input type="username" name="username" class="form-control mb-3" placeholder="New username" minlength="5" required autofocus> 
+            <button class="btn btn-lg btn-primary btn-block">Modify</button>
+        </form>
+
+        <h1 class="h3 mb-4 font-weight-normal">Modify password</h1>
+        <form action="{% url 'account_settings' %}" method="post" class="w-100 mx-auto" onsubmit="return confirm('Are you sure you want to change your password?');">
+            {% csrf_token %}
+            <input type="password" name="old_password" id="old_password" class="form-control mb-3" placeholder="Current password" minlength="8" required autofocus>  
+            <input type="password" name="new_password" id="new_password" class="form-control mb-3" placeholder="New password" minlength="8" required autofocus oninput="validateForm()">  
+            <input type="password" name="password_repeat" id="password_repeat" class="form-control mb-3" placeholder="Repeat new password" minlength="8" required autofocus oninput="validateForm()">
+            <div id="pass_rep_warn" class="alert alert-light" role="alert" hidden="true">
+                Password and password confirmation do not match!
+            </div>
+            <button id="submit" class="btn btn-lg btn-primary btn-block">Modify</button>
+        </form>
+        </div>
+
+        <div class="col m-5">
+            <h1 class="h3 mb-4 font-weight-normal">Permenantly delete your account</h1>
+            <form action="{% url 'delete_account' %}" method="get" id="delete_form" onsubmit="return confirm('Are you sure you want to delete your account?');">
+                <button class="btn btn-lg btn-danger btn-block">Delete account</button>
+            </form>
+        </div>
+</div>
+
+<script>
+function validateForm(){
+    var pass = document.getElementById("new_password").value;
+    var passrep =  document.getElementById("password_repeat").value;
+    if (pass != passrep) {
+        document.getElementById("pass_rep_warn").removeAttribute("hidden");
+        document.getElementById("submit").setAttribute("disabled", true);
+        return;
+    }
+    document.getElementById("pass_rep_warn").setAttribute("hidden", true);
+    document.getElementById("submit").removeAttribute("disabled");
+    return;
+}
+</script>
+{% endblock %}
