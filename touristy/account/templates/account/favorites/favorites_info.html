@@ -10,7 +10,9 @@
             You don't have any favorites.
         </div>
     {% else %}
-        <div class="album py-5 bg-light">
+    <div class="text-center">
+        <h1 class="text-light fw-light mx-auto my-5">Favorites</h1>
+        <div class="album py-5 bg-dark">
             <div class="container">
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
                     {% for fav in favorites %}
@@ -37,5 +39,6 @@
                 </div>
             </div>
         </div>
+    </div>
     {% endif %}
 {% endblock %}

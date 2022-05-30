@@ -12,16 +12,16 @@ Account
     {{ message }}
 </div>
 {% endif %}
-<div class="row">
+<div class="row text-light">
     <div class="col m-5">
-        <h1 class="h3 mb-4 font-weight-normal">Modify username</h1>
+        <h1 class="h3 mb-4 fw-light">Modify username</h1>
         <form action="{% url 'account_settings' %}" id="username_form" method="post" class="w-100 mx-auto mb-5" onsubmit="return confirm('Are you sure you want to change your username?');">
             {% csrf_token %}
             <input type="username" name="username" class="form-control mb-3" placeholder="New username" minlength="5" required autofocus> 
-            <button class="btn btn-lg btn-primary btn-block">Modify</button>
+            <button class="btn btn-lg btn-secondary btn-block">Modify</button>
         </form>
 
-        <h1 class="h3 mb-4 font-weight-normal">Modify password</h1>
+        <h1 class="h3 mb-4 fw-light">Modify password</h1>
         <form action="{% url 'account_settings' %}" method="post" class="w-100 mx-auto" onsubmit="return confirm('Are you sure you want to change your password?');">
             {% csrf_token %}
             <input type="password" name="old_password" id="old_password" class="form-control mb-3" placeholder="Current password" minlength="8" required autofocus>  
@@ -30,12 +30,12 @@ Account
             <div id="pass_rep_warn" class="alert alert-light" role="alert" hidden="true">
                 Password and password confirmation do not match!
             </div>
-            <button id="submit" class="btn btn-lg btn-primary btn-block">Modify</button>
+            <button id="submit" class="btn btn-lg btn-secondary btn-block">Modify</button>
         </form>
         </div>
 
         <div class="col m-5">
-            <h1 class="h3 mb-4 font-weight-normal">Permenantly delete your account</h1>
+            <h1 class="h3 mb-4 fw-light">Permenantly delete your account</h1>
             <form action="{% url 'delete_account' %}" method="get" id="delete_form" onsubmit="return confirm('Are you sure you want to delete your account?');">
                 <button class="btn btn-lg btn-danger btn-block">Delete account</button>
             </form>

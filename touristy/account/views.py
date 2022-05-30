@@ -11,6 +11,139 @@ from django.contrib.auth.hashers import PBKDF2PasswordHasher
 
 
 @login_required(login_url='/account/login/')
+def delete_image(request, image_id):
+    try:
+        image = Image.objects.get(pk=image_id)
+    except:
+        return redirect("error", message="There was an internal server error while trying to delete the image, please try again later.", title="Internal Server Error")
+    
+    if image.service.user != request.user:
+        return redirect("error", message="There was an internal server error while trying to delete the image, please try again later.", title="Internal Server Error")
+
+    service_id = image.service.pk
+    image.delete()
+    return redirect("modify_service", service_id=service_id)
+
+@login_required(login_url='/account/login/')
+def add_image(request):
+    if request.method == "POST":
+        form = AddImageForm(request.POST)
+
+        if form.is_valid():
+            service_id = form.cleaned_data["service_id"]
+            image_url = form.cleaned_data["image_url"]
+
+            try:
+                service = Service.objects.get(pk=service_id, user=request.user)
+            except:
+                return redirect("error", message="The add image form you submitted wasn't valid, retry again.", title="Invalid Form")
+
+            image = Image.objects.filter(url=image_url, service=service).first()
+            if image:
+                return redirect("error", message="The image you tried adding already exists.", title="Invalid Form", code=500)
+
+            image = Image(service=service, url=image_url)
+            image.save()
+
+            return redirect("modify_service", service_id=service_id)
+
+        return redirect("error", message="The add image form you submitted wasn't valid, retry again.", title="Invalid Form")
+    
+    return redirect("error", message="The page you requested doesn't exist.", title="Internal Server Error")
+
+
+@login_required(login_url='/account/login/')
+def my_services(request):
+    services = Service.objects.filter(user=request.user)
+
+    if not services:
+        return render(request, 'service/list_services/list_services.html', {
+            "services" : None,
+            "page_title" : "My services",
+            "msg" : "There are no services.",
+            "my_services" : True
+        })
+
+    return render(request, 'service/list_services/list_services.html', {
+        "services" : services,
+        "page_title" : "My services",
+        "msg" : None,
+        "my_services" : True
+    })
+
+
+@login_required(login_url='/account/login/')
+def add_service(request):
+    if request.method == 'POST':
+        form = AddServiceForm(request.POST)
+
+        if form.is_valid():
+            title = form.cleaned_data["title"]
+            type = form.cleaned_data["type"]
+            latitude = form.cleaned_data["latitude"]
+            longitude = form.cleaned_data["longitude"]
+
+            s = Service.objects.filter(latitude=latitude, longitude=longitude, title=title).first()
+            if s:
+                return render(request, "account/add_service/add_service.html", {
+                    "msg" : "A service with the same title and coordinates already exists."
+                })
+
+            s = Service(user=request.user, title=title, latitude=latitude, longitude=longitude, type=type)
+            s.save()
+            return redirect("my_services")
+        
+        return render(request, "account/add_service/add_service.html", {
+            "msg" : "Something went wrong with the fields you entered make sure you filled all the fields and with proper info."
+        })
+        
+    return render(request, "account/add_service/add_service.html")
+
+
+@login_required(login_url='/account/login/')
+def modify_service(request, service_id=None):
+    if request.method == 'POST':
+        form = ModifyServiceForm(request.POST)
+
+        if form.is_valid():
+            service_id = form.cleaned_data["service_id"]
+            title = form.cleaned_data["title"]
+            type = form.cleaned_data["type"]
+            latitude = form.cleaned_data["latitude"]
+            longitude = form.cleaned_data["longitude"]
+
+            s = Service.objects.get(user=request.user, id=service_id)
+
+            s.title = title
+            s.type = type
+            s.latitude = latitude
+            s.longitude = longitude
+
+            s.save()
+
+        return redirect("error", message="Something went wrong with the form you filled, please try filling it again.", code=500, title="Internal Server Error")
+
+    if service_id:
+        service = Service.objects.get(pk=service_id, user=request.user)
+        images = service.images.all()
+        return render(request, "account/modify_service/modify_service.html", {
+            "service" : service,
+            "images" : images
+        })
+        
+    return render(request, "account/modify_service/modify_service.html", {
+        "service" : service
+    })
+
+
+@login_required(login_url='/account/login/')
+def delete_service(request, service_id):
+    service = Service.objects.get(pk=service_id, user=request.user)
+    service.delete()
+    return redirect("home")
+
+
+@login_required(login_url='/account/login/')
 def delete_account(request):
     user = request.user
     dj_logout(request)
@@ -83,15 +216,13 @@ def account_settings(request):
 
 
 @login_required(login_url='/account/login/')
-def add_favourite(request):
-    if request.method == "POST":
-        service_id = int(request.POST.get("service_id"))
-        service = Service.objects.get(pk=service_id)
-        if service not in request.user.favorites.all():
-            f = Favorite(user=request.user, service=service, add_date=datetime.now())
-            f.save()
-        return redirect('service_info', service_id=service_id)
-    return redirect('favorites_info')
+def add_favourite(request, service_id):
+    service_id = int(service_id)
+    service = Service.objects.get(pk=service_id)
+    if service not in request.user.favorites.all():
+        f = Favorite(user=request.user, service=service, add_date=datetime.now())
+        f.save()
+    return redirect('service_info', service_id=service_id)
 
 
 @login_required(login_url='/account/login/')
@@ -107,33 +238,15 @@ def favorites_info(request):
 
 
 @login_required(login_url='/account/login/')
-def edit_service(request):
-    return HttpResponse('hvjbkjnl,')
-
-
-@login_required(login_url='/account/login/')
-def remove_favorite(request, fav_id):
-    f = Favorite.objects.filter(pk=int(fav_id), user=request.user).first()
-    if f:
-        f.delete()
-    return redirect('favorites_info')
-
-
-def login(request):
-    if not request.user.is_authenticated:
-        # code here, in case successful login, redirect to service/nearby route
-        if request.method == 'POST':
-            form_username = request.POST.get('username')
-            form_password = request.POST.get('password')
-            user = authenticate(request, username=form_username, password=form_password)
-            if user is not None:
-                dj_login(request, user)
-                return redirect("nearby")
-            else:
-                return render(request, "account/login/login.html", {
-                    "message" : "Wrong username or password!"
-                })
-        return render(request, "account/login/login.html")
+def remove_favorite(request, service_id):
+    try:
+        s = Service.objects.get(pk=service_id)
+        f = Favorite.objects.get(service=s, user=request.user)
+    except:
+        return redirect("error", message="There was an internal server error while trying to remove this service from your favorites, please try again later.", title="Internal Server Error")
+    
+    f.delete()
+    return redirect('service_info', service_id=service_id)
 
 
 @login_required(login_url='/account/login/')
@@ -170,41 +283,63 @@ def remove_rating(request):
 
     if request.method == 'POST':
         rating_id = int(request.POST.get('rating_id'))
-        r = Rating.objects.get(pk=rating_id, user=request.user)
-        r.delete()
+        try:
+            rating = Rating.objects.get(pk=rating_id, user=request.user)
+        except:
+            return redirect("error", message="There was an internal server error while trying to delete the rating, please try again later.", title="Internal Server Error")
+            
+        rating.delete()
 
     return redirect("service_info", service_id=service_id)
 
 
-def register(request):
-    if request.method == 'POST':
-        form = RegisterUserForm(request.POST)
-
-        # validate form
-        if form.is_valid():
-            form_username = form.cleaned_data['username']
-            form_password = form.cleaned_data['password']
-            form_password_repeat = form.cleaned_data['password_repeat']
-
-            # validate passwords matching
-            if not form.passwords_match():
-                return render(request, "account/register/register.html", {
-                    "message" : "Password and password confirmation did not match, please try again."
-                })
-
-            # validate username existance
-            user = User.objects.filter(username=form_username).first()
+def login(request):
+    if not request.user.is_authenticated:
+        # code here, in case successful login, redirect to service/nearby route
+        if request.method == 'POST':
+            form_username = request.POST.get('username')
+            form_password = request.POST.get('password')
+            user = authenticate(request, username=form_username, password=form_password)
             if user is not None:
-                return render(request, "account/register/register.html", {
-                    "message" : "Username already exists, please try another one."
+                dj_login(request, user)
+                return redirect("nearby")
+            else:
+                return render(request, "account/login/login.html", {
+                    "message" : "Wrong username or password!"
                 })
+        return render(request, "account/login/login.html")
 
-            # if all good, add user and redirect to login
-            User.objects.create_user(username=form_username, password=form_password)
-            return redirect("login")
 
-        return render(request, "account/register/register.html", {
-            "message" : "The form you submitted is invalid, please try again."
-        })
+def register(request):
+    if not request.user.is_authenticated:
+        if request.method == 'POST':
+            form = RegisterUserForm(request.POST)
 
-    return render(request, "account/register/register.html")
+            # validate form
+            if form.is_valid():
+                form_username = form.cleaned_data['username']
+                form_password = form.cleaned_data['password']
+                form_password_repeat = form.cleaned_data['password_repeat']
+
+                # validate passwords matching
+                if not form.passwords_match():
+                    return render(request, "account/register/register.html", {
+                        "message" : "Password and password confirmation did not match, please try again."
+                    })
+
+                # validate username existance
+                user = User.objects.filter(username=form_username).first()
+                if user is not None:
+                    return render(request, "account/register/register.html", {
+                        "message" : "Username already exists, please try another one."
+                    })
+
+                # if all good, add user and redirect to login
+                User.objects.create_user(username=form_username, password=form_password)
+                return redirect("login")
+
+            return render(request, "account/register/register.html", {
+                "message" : "The form you submitted is invalid, please try again."
+            })
+
+        return render(request, "account/register/register.html")

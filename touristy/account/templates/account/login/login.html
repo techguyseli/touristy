@@ -10,13 +10,13 @@
     {{ message }}
 </div>
 {% endif %}
-<div class="text-center position-absolute top-50 start-50 translate-middle">
-    <h1 class="h3 mb-4 font-weight-normal">Touristy account login</h1>
+<div class="text-center position-absolute top-50 start-50 translate-middle text-light">
+    <h1 class="h3 mb-4 fw-light">Touristy account login</h1>
     <form action="{% url 'login' %}" method="post" class="w-75 mx-auto">
         {% csrf_token %}
         <input type="username" name="username" class="form-control mb-3" placeholder="Username" required autofocus> 
         <input type="password" name="password" class="form-control mb-3" placeholder="Password" required autofocus>  
-        <button class="btn btn-lg btn-primary btn-block">Sign in</button>
+        <button class="btn btn-lg btn-secondary btn-block">Sign in</button>
     </form>
     <div class="mt-4">
         <div class="d-flex justify-content-center links">

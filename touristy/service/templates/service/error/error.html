@@ -1,0 +1,16 @@
+{% extends 'service/layout/layout.html' %}
+
+
+{% block title %}
+    Error
+{% endblock %}
+
+
+{% block body %}
+		<div class="d-flex flex-column justify-content-center text-center align-items-center text-light vh-100">
+			<h1 class="mb-1 fw-lighter" style="font-size: 10rem;">{{ code }}</h1>
+			<p class="fw-light" style="font-size: 2rem;">{{ title }}</p>
+			<p>{{ message }}</p>
+			<a href="{% url 'home' %}" class="btn btn-secondary w-auto">Back To Home</a>
+		</div>
+{% endblock %}

@@ -9,9 +9,14 @@
     <link rel="stylesheet" href="{% static 'service/style/bootstrap.min.css' %}">
     <title>{% block title %}{% endblock %}</title>
 </head>
-<body {% block home_style %}{% endblock %}>
+<body class="bg-dark fw-light" {% block home_style %}{% endblock %}>
     <header id="navbar" class="sticky-top">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-lg 
+        {% if is_home %}
+        navbar-light bg-transparent
+        {% else %}
+        navbar-dark bg-dark
+        {% endif %}">
             <div class="container-fluid">
               <a class="navbar-brand" href="{% url 'home' %}">Touristy</a>
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,9 +38,6 @@
                   <li class="nav-item">
                     <a class="nav-link" href="{% url 'map' %}"">Map</a>
                   </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">About</a>
-                  </li>
                 </ul>
                 <ul class="navbar-nav mb-2 mb-lg-0">
                   {% if request.user.is_authenticated %}
@@ -44,9 +46,11 @@
                         {{ request.user.username }}
                       </a>
                       <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'my_services' %}">My services</a></li>
                         <li><a class="dropdown-item" href="{% url 'favorites_info' %}">Favorites</a></li>
                         <li><a class="dropdown-item" href="{% url 'account_settings' %}">Settings</a></li>
                         <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                        
                       </ul>
                   {% else %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>

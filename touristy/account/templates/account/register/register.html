@@ -11,8 +11,8 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 {% endif %}
-<div class="text-center position-absolute top-50 start-50 translate-middle w-25">
-    <h1 class="h3 mb-4 font-weight-normal">Create a touristy account</h1>
+<div class="text-center position-absolute top-50 start-50 translate-middle w-25 fw-light text-light">
+    <h1 class="h3 mb-4 fw-light">Create a touristy account</h1>
     <form action="{% url 'register' %}" method="post" class="w-100 mx-auto">
         {% csrf_token %}
         <input type="username" name="username" class="form-control mb-3" placeholder="Username" minlength="5" required autofocus> 
@@ -21,7 +21,7 @@
         <div id="pass_rep_warn" class="alert alert-light" role="alert" hidden="true">
             Password and password confirmation do not match!
         </div>
-        <button id="submit" class="btn btn-lg btn-primary btn-block">Sign up</button>
+        <button id="submit" class="btn btn-lg btn-secondary btn-block">Sign up</button>
     </form>
     <div class="mt-4">
         <div class="d-flex justify-content-center links">

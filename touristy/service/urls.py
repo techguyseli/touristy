@@ -8,4 +8,5 @@ urlpatterns = [
     path('nearby/', views.nearby, name='nearby'),
     path('map/', views.map, name='map'),
     path('db_insert/', views.db_insert, name='db_insert'),
+    path('error/<int:code>/<str:title>/<str:message>', views.error, name='error'),
 ]

@@ -32,3 +32,26 @@ class ChangePasswordForm(forms.Form):
         if self.cleaned_data['new_password'] == self.cleaned_data['old_password']:
             return False
         return True
+
+
+class AddServiceForm(forms.Form):
+    csrfmiddlewaretoken = forms.CharField()
+    title = forms.CharField(min_length=1, max_length = 60)
+    type = forms.CharField(min_length=1, max_length = 20)
+    latitude = forms.DecimalField(max_digits=20, decimal_places=17)
+    longitude = forms.DecimalField(max_digits=20, decimal_places=17)
+
+
+class ModifyServiceForm(forms.Form):
+    csrfmiddlewaretoken = forms.CharField()
+    service_id = forms.IntegerField()
+    title = forms.CharField(min_length=1, max_length = 60)
+    type = forms.CharField(min_length=1, max_length = 20)
+    latitude = forms.DecimalField(max_digits=20, decimal_places=17)
+    longitude = forms.DecimalField(max_digits=20, decimal_places=17)
+
+
+class AddImageForm(forms.Form):
+    csrfmiddlewaretoken = forms.CharField()
+    service_id = forms.IntegerField()
+    image_url = forms.CharField(max_length=300)

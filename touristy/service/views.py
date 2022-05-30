@@ -6,8 +6,19 @@ from django.contrib.auth.models import User
 
 # Create your views here.
 
+
+def error(request, title, message, code=500):
+    return render(request, "service/error/error.html", {
+        "message" : message,
+        "title" : title,
+        "code" : code
+    })
+
+
 def home(request):
-    return render(request, "service/home/home.html")
+    return render(request, "service/home/home.html", {
+        "is_home" : True
+    })
 
 
 def map(request):
@@ -20,30 +31,43 @@ def service_info(request, service_id, msg=None):
     page_title = None
     images = None
     ratings = None
-    favourited = False
+    favorited = False
     service_rated = False
 
     try:
         service = Service.objects.get(pk=service_id)
     except:
-        page_title = "No service"
+        return redirect("error", message="The service that you requested doesn't exist.", title="Internal Server Error", code=500)
 
-    if service:
-        images = service.images.all()
-        page_title = service.title
-        ratings = service.ratings.all()
-        for rating in ratings:
-            rating.percentage = int(rating.stars * 20)
-            rating.userRating = False
-            if request.user == rating.user:
-                service_rated = True
-                rating.userRating = True
+    images = service.images.all()
+    page_title = service.title
+    ratings = service.ratings.all()
+    total_rating = 0
+    ratings_count = len(ratings)
+    
+    for rating in ratings:
+        total_rating += rating.stars
+        rating.userRating = False
+        rating.full_stars = range(rating.stars)
+        rating.empty_stars = range(5 - rating.stars)
+        if request.user == rating.user:
+            service_rated = True
+            rating.userRating = True
 
-    if service and request.user.is_authenticated and request.user.pk == service.user.pk:
-        userOwnsService = True
-        favourite = service.favorites.filter(user=request.user)
-        if favourite:
-            favourited = True
+    try:
+        avg_rating = int(total_rating / ratings_count)
+    except:
+        avg_rating = 0
+
+    full_stars = range(avg_rating)
+    empty_stars = range(5 - avg_rating)
+            
+    if request.user.is_authenticated:
+        if request.user == service.user:
+            userOwnsService = True
+        favorite = service.favorites.filter(user=request.user)
+        if favorite:
+            favorited = True
 
     return render(request, "service/service_info/service_info.html", {
         "service" : service,
@@ -51,9 +75,12 @@ def service_info(request, service_id, msg=None):
         "page_title" : page_title,
         "images" : images,
         "ratings" : ratings,
-        "favourited" : favourited,
+        "favorited" : favorited,
         "msg" : msg,
-        "service_rated" : service_rated
+        "service_rated" : service_rated, 
+        "full_stars" : full_stars,
+        "empty_stars" : empty_stars,
+        "reviews_count" : ratings_count
     })
 
 
@@ -71,13 +98,23 @@ def nearby(request):
 
         services = Service.objects.filter(latitude__gte=min_latitude, latitude__lte=max_latitude, longitude__gte=min_longitude, longitude__lte=max_longitude)
 
+        if not services:
+            return render(request, 'service/list_services/list_services.html', {
+                "services" : None,
+                "page_title" : "Nearby Services",
+                "msg" : "No services in your area."
+            })
+
         for service in services:
             images = service.images.all()
+
             if images:
                 service.thumbnail = images[0].url
 
-        return render(request, 'service/nearby/nearby.html', {
-            "services" : services
+        return render(request, 'service/list_services/list_services.html', {
+            "services" : services,
+            "page_title" : "Nearby Services",
+            "msg" : None
         })
     return redirect("home")
 

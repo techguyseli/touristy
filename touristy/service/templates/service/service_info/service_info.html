@@ -14,11 +14,49 @@
       </div>
 
   {% else %}
-    <div class="container">
-      {% if images %}
-        <div class="Album my-5 mx-auto w-25">
+  <div class="mx-5 mt-3 p-3 row">
+    <div class="row mb-5">
+      <div class="col d-flex align-items-center justify-content-start">
+        <div>
+          <h1 class="text-light fw-light mb-4" style="font-size: 5rem;">{{ service.title | title }}</h1>
+          <div class="hstack gap-4">
+            <div class="">
+              {% for item in full_stars %}
+                <span class="badge rounded-pill text-secondary bg-secondary border border-secondary" style="font-size: 0.4rem;">u</span>
+              {% endfor %}
+              {% for item in empty_stars %}
+                <span class="badge rounded-pill text-dark bg-transparent border border-secondary" style="font-size: 0.4rem;">u</span>
+              {% endfor %}
+              <div class="me-1"></div>
+              <span class="text-light fw-light">{{ reviews_count }} reviews</span>
+            </div>
+            <div class="vr bg-light"></div>
+            <span class="text-light fw-light">{{ service.type | title }}</span>
+          </div>
+        </div>
+      </div>
+      {% if request.user.is_authenticated %}
+        <div class="col d-flex align-items-end justify-content-end">
+          <div>
+            {% if favorited %}
+            <a href="{% url 'remove_favorite' service.id %}" class="me-2"><button type="button" class="btn btn-danger rounded-pill">Remove from favorites</button></a>
+          {% else %}
+            <a href="{% url 'add_favourite' service.id %}" class="me-2"><button type="button" class="btn btn-secondary rounded-pill">Add to favorites</button></a>
+          {% endif %}
+          {% if userOwnsService %}
+            <a href="{% url 'modify_service' service.id %}" class="me-2"><button type="button" class="btn btn-secondary rounded-pill">Modify service</button></a>
+            <a href="{% url 'delete_service' service.id %}" class=""><button type="button" class="btn btn-danger rounded-pill">Delete service</button></a>
+          {% endif %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+    <hr class="text-light" style="height: 3px;">
+    {% if images %}
+    <div class="row">
+      <div class="Album my-5 mx-auto w-75 p-1 bg-light rounded">
             <div id="carouselExampleControls" class="carousel slide carousel-dark">
-              <div class="carousel-inner">
+              <div class="carousel-inner rounded">
 
                 {% for image in images %}
                   <div class="carousel-item">
@@ -37,68 +75,65 @@
               </button>
             </div>
         </div>
+    </div>
+        
       {% else %}
-        <h1>No images available</h1>
+        <div class="alert alert-info">
+          No images available
+        </div>
       {% endif %}
 
-      <div class="border rounded p-3 my-5"> 
-          <h1>{{ service.title }}</h1>
-          <h5 class="mb-4">{{ service.type | title }}</h5>
+      <hr class="text-light" style="height: 3px;">
 
-          {% if request.user.is_authenticated %}
-            <div class="mb-4">
-              {% if favourited %}
-                <button type="button" class="btn btn-primary">Remove from favorites</button>
-              {% else %}
-                <form action="{% url 'add_favourite' %}" method="post" class="my-1">
-                  {% csrf_token %}
-                  <input type="hidden" name="service_id" value="{{ service.id }}">
-                  <input type="submit" class="btn btn-primary" value="Add to favourites">
-                </form>
-              {% endif %}
+    {% if request.user.is_authenticated %}
+      {% if not service_rated %}
+        <h1 class="text-light fw-light mt-3 mb-3">Review {{ service.title | title }}</h1>
+        <form action="{% url 'add_rating' %}" method="post" class="mb-5">
+          {% csrf_token %}
+          <span class="text-light fw-light">Your overall rating for {{ service.title | title }}</span>
+          <div class="mb-4 d-flex align-items-center mt-2">
+            <span class="star badge rounded-pill text-secondary bg-secondary border border-secondary me-1" style="font-size: 0.4rem;" onmouseover="apply_fill(1);" onclick="validate_selection(1);">u</span>
+            <span class="star badge rounded-pill text-dark bg-transparent border border-secondary me-1" style="font-size: 0.4rem;" onmouseover="apply_fill(2);" onclick="validate_selection(2);">u</span>
+            <span class="star badge rounded-pill text-dark bg-transparent border border-secondary me-1" style="font-size: 0.4rem;" onmouseover="apply_fill(3);" onclick="validate_selection(3);">u</span>
+            <span class="star badge rounded-pill text-dark bg-transparent border border-secondary me-1" style="font-size: 0.4rem;" onmouseover="apply_fill(4);" onclick="validate_selection(4);">u</span>
+            <span class="star badge rounded-pill text-dark bg-transparent border border-secondary me-1" style="font-size: 0.4rem;" onmouseover="apply_fill(5);" onclick="validate_selection(5);">u</span>
+            <span id="stars_selection_text" class="text-light fw-light ms-2"></span>
+          </div>
+          <input type="hidden" name="service_id" value="{{ service.id }}">
+          <input type="hidden" name="stars" id="stars" value="{{ service.id }}">
+          <div class="form-floating mb-4">
+            <textarea name="comment" class="form-control" id="floatingTextarea2" style="height: 100px" required="true"></textarea>
+            <label for="floatingTextarea2">Tell people about your experience in {{ service.title | title }}</label>
+          </div>
+          <div class="d-grid gap-2 d-md-block">
+            <input type="submit" class="btn btn-secondary" value="Post">
+          </div>
+        </form>
+        <hr class="text-light" style="height: 3px;">
+      {% endif %}
+    {% endif %}
 
-              {% if userOwnsService %}
-              <form action="{% url 'edit_service' %}" method="post" class="my-1">
-                {% csrf_token %}
-                <input type="hidden" value="{{ service.id }}">
-                <input type="submit" class="btn btn-primary" value="Edit">
-              </form>
-              {% endif %}
-            </div>
 
-            {% if not service_rated %}
-              <hr>
-              <h1>Rate this service</h1>
-              <form action="{% url 'add_rating' %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="service_id" value="{{ service.id }}">
-                <input name="stars" type="range" class="form-range w-25" min="1" max="5" id="customRange2">
-                <div class="form-floating mb-4">
-                  <textarea name="comment" class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
-                  <label for="floatingTextarea2">Comment</label>
-                </div>
-                <div class="d-grid gap-2 d-md-block">
-                  <input type="submit" class="btn btn-primary" value="Post">
-                </div>
-              </form>
-            {% endif %}
-          {% endif %}
-          <hr>
-          {% if ratings %}
-            <h1>Ratings</h1>
+    {% if ratings %}
+            <h1 class="text-light fw-light mt-3">Reviews</h1>
             {% for rating in ratings %}
-              <div class="border rounded m-2 p-2">
-                <h3>{{ rating.user.username }}</h3>
-                <div class="progress m-3">
-                  <div class="progress-bar" role="progressbar" style="width: {{ rating.percentage }}%" aria-valuenow="{{ rating.percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+              <div class="mb-2">
+                <span class="text-light fw-light mb-2">{{ rating.user.username }}</span>
+                <div class="mb-3 d-flex align-items-center mt-2">
+                  {% for item in rating.full_stars %}
+                    <span class="badge rounded-pill text-secondary bg-secondary border border-secondary me-1" style="font-size: 0.4rem;">u</span>
+                  {% endfor %}
+                  {% for item in rating.empty_stars %}
+                    <span class="badge rounded-pill text-dark bg-transparent border border-secondary me-1" style="font-size: 0.4rem;">u</span>
+                  {% endfor %}
                 </div>                
                 <textarea class="form-control" id="floatingTextarea2" style="height: 100px" disabled>{{ rating.comment_str }}</textarea>
                 {% if rating.userRating %}
-                  <form action="{% url 'remove_rating' %}" method="post" class="my-2">
+                  <form action="{% url 'remove_rating' %}" method="post" class="mt-2 mb-3">
                     {% csrf_token %}
                     <input type="hidden" name="service_id" value="{{ service.id }}">
                     <input type="hidden" name="rating_id" value="{{ rating.id }}">
-                    <input type="submit" class="btn btn-primary" value="Delete">
+                    <input type="submit" class="btn btn-danger" value="Delete">
                   </form>
                 {% endif %}
               </div>
@@ -106,16 +141,56 @@
           {% else %}
             <h1>This service is not rated yet.</h1>
           {% endif %}
-      </div>
-    </div>    
+      </div> 
   {% endif %}
 
   <script>
-    window.addEventListener('load', 
-      function() { 
-        images = document.querySelectorAll(".carousel-item");
-        console.log(images)
-        images[0].classList.add("active");
-      }, false);
+    window.addEventListener('load', function() { 
+      images = document.querySelectorAll(".carousel-item");
+      images[0].classList.add("active");
+    }, false);
+
+    function hasClass(ele,cls) {
+      return !!ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'));
+    }
+
+    function addClass(ele,cls) {
+      if (!hasClass(ele,cls)) ele.className += " "+cls;
+    }
+
+    function removeClass(ele,cls) {
+      if (hasClass(ele,cls)) {
+        var reg = new RegExp('(\\s|^)'+cls+'(\\s|$)');
+        ele.className=ele.className.replace(reg,' ');
+      }
+    }
+
+    function apply_fill(stars_count){
+      stars = document.querySelectorAll(".star");
+      for (let index = 0; index < 5; index++) {
+        if(index < stars_count){
+          addClass(stars[index], "text-secondary");
+          addClass(stars[index], "bg-secondary");
+          removeClass(stars[index], "text-dark");
+          removeClass(stars[index], "bg-transparent");
+        }
+        else{
+          removeClass(stars[index], "text-secondary");
+          removeClass(stars[index], "bg-secondary");
+          addClass(stars[index], "text-dark");
+          addClass(stars[index], "bg-transparent");
+        }
+      }
+      document.getElementById("stars").value = stars_count;
+    }
+
+    function validate_selection(stars_count){
+      apply_fill(stars_count);
+      document.getElementById("stars_selection_text").innerHTML = "Selected!";
+      stars = document.querySelectorAll(".star");
+      for (let index = 0; index < 5; index++) {
+          stars[index].removeAttribute("onmouseover")
+      }
+    }
   </script>
 {% endblock %}
