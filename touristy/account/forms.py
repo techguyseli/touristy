@@ -55,3 +55,10 @@ class AddImageForm(forms.Form):
     csrfmiddlewaretoken = forms.CharField()
     service_id = forms.IntegerField()
     image_url = forms.CharField(max_length=300)
+
+
+class AddRatingForm(forms.Form):
+    csrfmiddlewaretoken = forms.CharField()
+    stars = forms.IntegerField(min_value=1, max_value=5)
+    service_id = forms.IntegerField()
+    comment = forms.CharField()

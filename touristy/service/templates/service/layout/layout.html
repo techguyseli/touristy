@@ -24,10 +24,10 @@
               </button>
               <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto me-auto mb-2 mb-lg-0">
-                  <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{% url 'home' %}"">Home</a>
+                  <li class="nav-item mx-2">
+                    <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
                   </li>
-                  <li class="nav-item">
+                  <li class="nav-item  mx-2">
                     <form id="coordinates" action="{% url 'nearby' %}" method="post" hidden>
                       {% csrf_token %}
                       <input type="hidden" name="longitude" id="longitude" value="">
@@ -35,9 +35,17 @@
                     </form>
                     <a class="nav-link" href="#" onclick="sendForm()">Nearby</a>
                   </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'map' %}"">Map</a>
+                  <li class="nav-item  mx-2">
+                    <a class="nav-link" href="{% url 'map' %}">Map</a>
                   </li>
+                  {% if request.user.is_authenticated %}
+                    <li class="nav-item  mx-2">
+                      <a class="nav-link" href="{% url 'my_services' %}">My services</a>
+                    </li>
+                    <li class="nav-item  mx-2">
+                      <a class="nav-link" href="{% url 'favorites_info' %}">Favorites</a>
+                    </li>
+                  {% endif %}
                 </ul>
                 <ul class="navbar-nav mb-2 mb-lg-0">
                   {% if request.user.is_authenticated %}
@@ -46,12 +54,10 @@
                         {{ request.user.username }}
                       </a>
                       <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{% url 'my_services' %}">My services</a></li>
-                        <li><a class="dropdown-item" href="{% url 'favorites_info' %}">Favorites</a></li>
                         <li><a class="dropdown-item" href="{% url 'account_settings' %}">Settings</a></li>
                         <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-                        
                       </ul>
+                    </li>
                   {% else %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>

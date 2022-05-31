@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from .models import Service, Image
 from account.models import Favorite, Rating
 from django.contrib.auth.models import User
+from .forms import *
+from decimal import Decimal
 
 # Create your views here.
 
@@ -86,36 +88,39 @@ def service_info(request, service_id, msg=None):
 
 def nearby(request):
     if request.method == 'POST':
-        user_latitude = float(request.POST.get('latitude'))
-        user_longitude = float(request.POST.get('longitude'))
+        form = NearbyForm(request.POST)
+        if form.is_valid():
+            user_latitude = form.cleaned_data['latitude']
+            user_longitude = form.cleaned_data['longitude']
 
-        max_distnace = 0.019
+            max_distnace = Decimal(0.015)
 
-        max_latitude = user_latitude + max_distnace
-        min_latitude = user_latitude - max_distnace
-        max_longitude = user_longitude + max_distnace
-        min_longitude = user_longitude - max_distnace
+            max_latitude = user_latitude + max_distnace
+            min_latitude = user_latitude - max_distnace
+            max_longitude = user_longitude + max_distnace
+            min_longitude = user_longitude - max_distnace
 
-        services = Service.objects.filter(latitude__gte=min_latitude, latitude__lte=max_latitude, longitude__gte=min_longitude, longitude__lte=max_longitude)
+            services = Service.objects.filter(latitude__gte=min_latitude, latitude__lte=max_latitude, longitude__gte=min_longitude, longitude__lte=max_longitude)
 
-        if not services:
+            if not services:
+                return render(request, 'service/list_services/list_services.html', {
+                    "services" : None,
+                    "page_title" : "Nearby Services",
+                    "msg" : "No services in your area."
+                })
+
+            for service in services:
+                images = service.images.all()
+
+                if images:
+                    service.thumbnail = images[0].url
+
             return render(request, 'service/list_services/list_services.html', {
-                "services" : None,
+                "services" : services,
                 "page_title" : "Nearby Services",
-                "msg" : "No services in your area."
+                "msg" : None
             })
-
-        for service in services:
-            images = service.images.all()
-
-            if images:
-                service.thumbnail = images[0].url
-
-        return render(request, 'service/list_services/list_services.html', {
-            "services" : services,
-            "page_title" : "Nearby Services",
-            "msg" : None
-        })
+        return redirect("error", message="There was an error getting your location, please try again later.", title="Internal Server Error", code=500)
     return redirect("home")
 
 

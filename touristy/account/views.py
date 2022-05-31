@@ -24,6 +24,7 @@ def delete_image(request, image_id):
     image.delete()
     return redirect("modify_service", service_id=service_id)
 
+
 @login_required(login_url='/account/login/')
 def add_image(request):
     if request.method == "POST":
@@ -38,8 +39,8 @@ def add_image(request):
             except:
                 return redirect("error", message="The add image form you submitted wasn't valid, retry again.", title="Invalid Form")
 
-            image = Image.objects.filter(url=image_url, service=service).first()
-            if image:
+            images = Image.objects.filter(url=image_url, service=service)
+            if images:
                 return redirect("error", message="The image you tried adding already exists.", title="Invalid Form", code=500)
 
             image = Image(service=service, url=image_url)
@@ -55,6 +56,12 @@ def add_image(request):
 @login_required(login_url='/account/login/')
 def my_services(request):
     services = Service.objects.filter(user=request.user)
+
+    for service in services:
+        images = service.images.all()
+
+        if images:
+            service.thumbnail = images[0].url
 
     if not services:
         return render(request, 'service/list_services/list_services.html', {
@@ -83,8 +90,8 @@ def add_service(request):
             latitude = form.cleaned_data["latitude"]
             longitude = form.cleaned_data["longitude"]
 
-            s = Service.objects.filter(latitude=latitude, longitude=longitude, title=title).first()
-            if s:
+            services = Service.objects.filter(latitude=latitude, longitude=longitude, title=title)
+            if services:
                 return render(request, "account/add_service/add_service.html", {
                     "msg" : "A service with the same title and coordinates already exists."
                 })
@@ -112,7 +119,10 @@ def modify_service(request, service_id=None):
             latitude = form.cleaned_data["latitude"]
             longitude = form.cleaned_data["longitude"]
 
-            s = Service.objects.get(user=request.user, id=service_id)
+            try:
+                s = Service.objects.get(user=request.user, id=service_id)
+            except:
+                return redirect("error", message="Something went wrong with the form you filled, please try filling it again.", code=500, title="Internal Server Error")
 
             s.title = title
             s.type = type
@@ -124,23 +134,28 @@ def modify_service(request, service_id=None):
         return redirect("error", message="Something went wrong with the form you filled, please try filling it again.", code=500, title="Internal Server Error")
 
     if service_id:
-        service = Service.objects.get(pk=service_id, user=request.user)
+        try:
+            service = Service.objects.get(pk=service_id, user=request.user)
+        except:
+            return redirect("error", message="Something went wrong, please try again.", code=500, title="Internal Server Error")
+
         images = service.images.all()
         return render(request, "account/modify_service/modify_service.html", {
             "service" : service,
             "images" : images
         })
         
-    return render(request, "account/modify_service/modify_service.html", {
-        "service" : service
-    })
+    return redirect("error", message="Something went wrong, please try again.", code=500, title="Internal Server Error")
 
 
 @login_required(login_url='/account/login/')
 def delete_service(request, service_id):
-    service = Service.objects.get(pk=service_id, user=request.user)
+    try:
+        service = Service.objects.get(pk=service_id, user=request.user)
+    except:
+        return redirect("error", message="Something went wrong, please try again.", code=500, title="Internal Server Error")
     service.delete()
-    return redirect("home")
+    return redirect("my_services")
 
 
 @login_required(login_url='/account/login/')
@@ -148,7 +163,7 @@ def delete_account(request):
     user = request.user
     dj_logout(request)
     user.delete()
-    return redirect(reverse('nearby'))
+    return redirect('nearby')
 
 
 @login_required(login_url='/account/login/')
@@ -162,8 +177,8 @@ def account_settings(request):
             form_username = form1.cleaned_data['username']
 
             # validate username existance
-            user = User.objects.filter(username=form_username).first()
-            if user is not None:
+            users = User.objects.filter(username=form_username)
+            if users is not None:
                 return render(request, "account/account_settings/account_settings.html", {
                     "message" : "Username already exists, please try another one."
                 })
@@ -179,10 +194,11 @@ def account_settings(request):
             form_new_password = form2.cleaned_data['new_password']
             form_password_repeat = form2.cleaned_data['password_repeat']
 
+            # check if current password is correct
             user = authenticate(request, username=request.user.username, password=form_old_password)
             if user is None:
                 return render(request, "account/account_settings/account_settings.html", {
-                    "message" : "Invalid current password."
+                    "message" : "Incorrect password."
                 })
 
             # check if password changed
@@ -202,9 +218,7 @@ def account_settings(request):
             request.user.password = hasher.encode(form_new_password, salt)
             request.user.save(update_fields=['password'])
 
-            return render(request, "account/account_settings/account_settings.html", {
-                "message" : None
-            })
+            return redirect("login")
 
         return render(request, "account/account_settings/account_settings.html", {
             "message" : "The form you submitted is invalid, please try again."
@@ -218,11 +232,15 @@ def account_settings(request):
 @login_required(login_url='/account/login/')
 def add_favourite(request, service_id):
     service_id = int(service_id)
-    service = Service.objects.get(pk=service_id)
+    try:
+        service = Service.objects.get(pk=service_id)
+    except:
+        return redirect("error", message="Something went wrong, please try again.", code=500, title="Internal Server Error")
     if service not in request.user.favorites.all():
         f = Favorite(user=request.user, service=service, add_date=datetime.now())
         f.save()
-    return redirect('service_info', service_id=service_id)
+        return redirect('service_info', service_id=service_id)
+    return redirect("error", message="This service is alredy added to your favorites.", code=500, title="Internal Server Error")
 
 
 @login_required(login_url='/account/login/')
@@ -258,14 +276,19 @@ def logout(request):
 @login_required(login_url='/account/login/')
 def add_rating(request):
     if request.method == 'POST':
-        stars = int(request.POST.get('stars'))
+        form = AddRatingForm(request.POST)
 
-        if stars < 0 or stars > 5:
-            return redirect("service_info", service_id=service_id)
+        if not form.is_valid():
+            return redirect("error", message="There was an internal server error, please try again later.", title="Internal Server Error")
 
-        service_id = int(request.POST.get('service_id'))
-        service = Service.objects.get(pk=service_id)
-        comment = request.POST.get('comment')
+        stars = form.cleaned_data['stars']
+        service_id = form.cleaned_data['service_id']
+        comment = form.cleaned_data['comment']
+        
+        try:
+            service = Service.objects.get(pk=service_id)
+        except:
+            return redirect("error", message="There was an internal server error, please try again later.", title="Internal Server Error")
 
         existing_rating = Rating.objects.filter(user=request.user, service=service)
         if existing_rating:
@@ -273,23 +296,18 @@ def add_rating(request):
 
         r = Rating(user=request.user, service=service, stars=stars, comment_str=comment)
         r.save()
+        return redirect("service_info", service_id=service_id)
+    return redirect("error", message="There was an internal server error, please try again later.", title="Internal Server Error")
 
-    return redirect("service_info", service_id=service_id)
-    
 
 @login_required(login_url='/account/login/')
-def remove_rating(request):
-    service_id = int(request.POST.get('service_id'))
-
-    if request.method == 'POST':
-        rating_id = int(request.POST.get('rating_id'))
-        try:
-            rating = Rating.objects.get(pk=rating_id, user=request.user)
-        except:
-            return redirect("error", message="There was an internal server error while trying to delete the rating, please try again later.", title="Internal Server Error")
-            
-        rating.delete()
-
+def remove_rating(request, rating_id):
+    try:
+        rating = Rating.objects.get(pk=rating_id, user=request.user)
+    except:
+        return redirect("error", message="There was an internal server error while trying to delete the rating, please try again later.", title="Internal Server Error", code=500)
+    service_id = rating.service.id
+    rating.delete()
     return redirect("service_info", service_id=service_id)
 
 
@@ -308,6 +326,8 @@ def login(request):
                     "message" : "Wrong username or password!"
                 })
         return render(request, "account/login/login.html")
+
+    return redirect("error", message="Please logout before you visit this page", title="Internal Server Error", code=500)
 
 
 def register(request):
@@ -328,8 +348,8 @@ def register(request):
                     })
 
                 # validate username existance
-                user = User.objects.filter(username=form_username).first()
-                if user is not None:
+                users = User.objects.filter(username=form_username)
+                if users:
                     return render(request, "account/register/register.html", {
                         "message" : "Username already exists, please try another one."
                     })
@@ -343,3 +363,5 @@ def register(request):
             })
 
         return render(request, "account/register/register.html")
+        
+    return redirect("error", message="Please logout before you visit this page", title="Internal Server Error", code=500)

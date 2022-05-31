@@ -117,8 +117,8 @@
     {% if ratings %}
             <h1 class="text-light fw-light mt-3">Reviews</h1>
             {% for rating in ratings %}
-              <div class="mb-2">
-                <span class="text-light fw-light mb-2">{{ rating.user.username }}</span>
+              <div class="mb-2 p-2 px-3 border rounded border-secondary">
+                <span class="text-light fw-bold mb-2">{{ rating.user.username }}</span>
                 <div class="mb-3 d-flex align-items-center mt-2">
                   {% for item in rating.full_stars %}
                     <span class="badge rounded-pill text-secondary bg-secondary border border-secondary me-1" style="font-size: 0.4rem;">u</span>
@@ -126,15 +126,12 @@
                   {% for item in rating.empty_stars %}
                     <span class="badge rounded-pill text-dark bg-transparent border border-secondary me-1" style="font-size: 0.4rem;">u</span>
                   {% endfor %}
-                </div>                
-                <textarea class="form-control" id="floatingTextarea2" style="height: 100px" disabled>{{ rating.comment_str }}</textarea>
+                </div>  
+                <p class="text-light">
+                  {{ rating.comment_str }}
+                </p>
                 {% if rating.userRating %}
-                  <form action="{% url 'remove_rating' %}" method="post" class="mt-2 mb-3">
-                    {% csrf_token %}
-                    <input type="hidden" name="service_id" value="{{ service.id }}">
-                    <input type="hidden" name="rating_id" value="{{ rating.id }}">
-                    <input type="submit" class="btn btn-danger" value="Delete">
-                  </form>
+                  <a href="{% url 'remove_rating' rating.id %}"><button class="btn btn-danger">Delete</button></a>
                 {% endif %}
               </div>
             {% endfor %}
