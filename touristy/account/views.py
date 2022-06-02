@@ -130,6 +130,7 @@ def modify_service(request, service_id=None):
             s.longitude = longitude
 
             s.save()
+            return redirect("modify_service", service_id=s.id)
 
         return redirect("error", message="Something went wrong with the form you filled, please try filling it again.", code=500, title="Internal Server Error")
 

@@ -17,10 +17,58 @@
         {% csrf_token %}
         <input type="text" name="title" class="form-control mb-3" required placeholder="Title">
         <input type="text" name="type" class="form-control mb-3" required placeholder="Type">
-        <input type="text" name="latitude" class="form-control mb-3" required placeholder="Latitude">
-        <input type="text" name="longitude" class="form-control mb-3" required placeholder="Longitude">
+        <input type="text" name="latitude" id="add_service_latitude" class="form-control mb-3" required placeholder="Latitude">
+        <input type="text" name="longitude" id="add_service_longitude" class="form-control mb-3" required placeholder="Longitude">
         <input type="hidden" name="images_urls" value="test">
-        <input type="submit" class="btn btn-secondary" value="Create service">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+    integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
+    crossorigin=""/>
+    <style>
+        #map {
+            height: 350px;
+        }
+    </style>
+
+    <div class="w-75 mx-auto ">
+      <div id="map" class="px-4 mb-3 rounded"></div>
+    </div>
+    
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
+    integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
+    crossorigin=""></script>
+
+    <script>
+
+var map = L.map('map').setView([33.96919901215576, -6.842159378465117], 13);
+
+L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox/streets-v11',
+    tileSize: 512,
+    zoomOffset: -1,
+    accessToken: 'pk.eyJ1Ijoic29tZW9uZWJyb29oIiwiYSI6ImNsMzMyejdsazFjeDIzY3BzMGs0cmwzeHgifQ.NTCc3npvCl0F-tieh_fraw'
+}).addTo(map);
+
+var popup = L.popup();
+
+function onMapClick(e) {
+    popup
+        .setLatLng(e.latlng)
+        .setContent("Coordinates selected.")
+        .openOn(map);
+
+    document.getElementById("add_service_latitude").value = e.latlng.lat.toString();
+    document.getElementById("add_service_longitude").value = e.latlng.lng.toString();
+}
+
+map.on('click', onMapClick);
+
+function onSubmitClick(){
+    document.getElementById("coordinates").submit()
+}
+    </script>
+    <input type="submit" class="btn btn-secondary" value="Create service">
         </form>
     
 {% endblock %}
