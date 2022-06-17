@@ -24,7 +24,7 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="btn-group mx-4">
                                         <a class="mx-1" href="{% url 'service_info' fav.service.id %}"><button type="button" class="btn btn-sm btn-outline-secondary">View</button></a>
-                                        <a href="{% url 'remove_favorite' fav.id %}"><button type="button" class="btn btn-sm btn-outline-secondary">Remove</button></a>
+                                        <a href="{% url 'remove_favorite' fav.service.id 1 %}"><button type="button" class="btn btn-sm btn-outline-secondary">Remove</button></a>
                                     </div>
                                     <div>
                                         <small>{{ fav.service.type | title }}</small> <br>

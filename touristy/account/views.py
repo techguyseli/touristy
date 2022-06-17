@@ -15,10 +15,10 @@ def delete_image(request, image_id):
     try:
         image = Image.objects.get(pk=image_id)
     except:
-        return redirect("error", message="There was an internal server error while trying to delete the image, please try again later.", title="Internal Server Error")
+        return redirect("error", title="Internal Server Error", message="There was an internal server error while trying to delete the image, please try again later.", code=500)
     
     if image.service.user != request.user:
-        return redirect("error", message="There was an internal server error while trying to delete the image, please try again later.", title="Internal Server Error")
+        return redirect("error", title="Internal Server Error", message="There was an internal server error while trying to delete the image, please try again later.", code=500)
 
     service_id = image.service.pk
     image.delete()
@@ -37,20 +37,20 @@ def add_image(request):
             try:
                 service = Service.objects.get(pk=service_id, user=request.user)
             except:
-                return redirect("error", message="The add image form you submitted wasn't valid, retry again.", title="Invalid Form")
+                return redirect("error", title="Invalid Form", message="The add image form you submitted wasn't valid, retry again.", code=500)
 
             images = Image.objects.filter(url=image_url, service=service)
             if images:
-                return redirect("error", message="The image you tried adding already exists.", title="Invalid Form", code=500)
+                return redirect("error",title="Invalid Form", message="The image you tried adding already exists.", code=500)
 
             image = Image(service=service, url=image_url)
             image.save()
 
             return redirect("modify_service", service_id=service_id)
 
-        return redirect("error", message="The add image form you submitted wasn't valid, retry again.", title="Invalid Form")
+        return redirect("error", title="Invalid Form", message="The add image form you submitted wasn't valid, retry again.", code=500)
     
-    return redirect("error", message="The page you requested doesn't exist.", title="Internal Server Error")
+    return redirect("error", message="The page you requested doesn't exist.", title="Internal Server Error", code=500)
 
 
 @login_required(login_url='/account/login/')
@@ -257,14 +257,18 @@ def favorites_info(request):
 
 
 @login_required(login_url='/account/login/')
-def remove_favorite(request, service_id):
+def remove_favorite(request, service_id, from_favorites):
     try:
         s = Service.objects.get(pk=service_id)
         f = Favorite.objects.get(service=s, user=request.user)
     except:
-        return redirect("error", message="There was an internal server error while trying to remove this service from your favorites, please try again later.", title="Internal Server Error")
+        return redirect("error", message="There was an internal server error while trying to remove this service from your favorites, please try again later.", title="Internal Server Error", code=500)
     
     f.delete()
+
+    if from_favorites == 1:
+        return redirect('favorites_info')
+
     return redirect('service_info', service_id=service_id)
 
 
@@ -280,7 +284,7 @@ def add_rating(request):
         form = AddRatingForm(request.POST)
 
         if not form.is_valid():
-            return redirect("error", message="There was an internal server error, please try again later.", title="Internal Server Error")
+            return redirect("error", message="There was an internal server error, please try again later.", title="Internal Server Error", code=500)
 
         stars = form.cleaned_data['stars']
         service_id = form.cleaned_data['service_id']
@@ -289,7 +293,7 @@ def add_rating(request):
         try:
             service = Service.objects.get(pk=service_id)
         except:
-            return redirect("error", message="There was an internal server error, please try again later.", title="Internal Server Error")
+            return redirect("error", message="There was an internal server error, please try again later.", title="Internal Server Error", code=500)
 
         existing_rating = Rating.objects.filter(user=request.user, service=service)
         if existing_rating:
@@ -298,7 +302,7 @@ def add_rating(request):
         r = Rating(user=request.user, service=service, stars=stars, comment_str=comment)
         r.save()
         return redirect("service_info", service_id=service_id)
-    return redirect("error", message="There was an internal server error, please try again later.", title="Internal Server Error")
+    return redirect("error", message="There was an internal server error, please try again later.", title="Internal Server Error", code=500)
 
 
 @login_required(login_url='/account/login/')
