@@ -24,7 +24,6 @@ g --> g2
 u --> u2
 u --> acc_man
 a --> a1
-a --> acc_man
 a --> service_management
 u --> personnal_service_management
 
