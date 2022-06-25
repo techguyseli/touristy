@@ -1,22 +1,22 @@
 @startuml nearby_seq
-actor User as usr
-participant "GUI" as fr
-participant "System server" as sys
-participant "Database server" as db
-usr -> fr : Request nearby services
+actor Utilisateur as usr
+participant "Interface graphique" as fr
+participant "Système" as sys
+participant "Base de données" as db
+usr -> fr : Demander les services à proximité
 activate usr
 activate fr
-fr -> fr : Get user/visitor coordinates
-fr -> sys : Request services nearby coordinates
+fr -> fr : Obtenir les coordonnées d'utilisateur/visiteur
+fr -> sys : Demander des services à proximité des coordonnées
 activate sys
-sys -> db : Query places nearby coordinates
+sys -> db : Interroger les lieux à proximité des coordonnées
 activate db
-db --> sys : Send query results
+db --> sys : Envoyer les résultats de la requête
 deactivate db
-alt Query not empty
-    sys --> fr : Render available services' webpage
+alt Requête non vide
+    sys --> fr : Rendre la page web des services disponibles
 else else
-    sys --> fr : Render custom message
+    sys --> fr : Afficher un message personnalisé
     deactivate sys
 end
 deactivate sys
@@ -24,141 +24,145 @@ deactivate sys
 
 
 @startuml map_nearby_seq
-actor User as usr
-participant "GUI" as fr
-participant "System server" as sys
-participant "Database server" as db
-usr -> sys : Request map selection webpage
+actor Utilisateur as usr
+participant "Interface graphique" as fr
+participant "Système" as sys
+participant "Base de données" as db
+usr -> sys : Demander une page Web de sélection de carte
 activate usr
 activate sys
-sys --> fr : Render webpage 
+sys --> fr : Rendre la page web 
 activate fr
-usr -> fr : Select place in the map
-fr -> sys : Request services nearby selected coordinates
-sys -> db : Query places nearby coordinates
+usr -> fr : Sélectionner un emplacement dans la carte
+fr -> sys : Demander les services à proximité des coordonnées sélectionnées
+sys -> db : Interroger les services à proximité des coordonnées
 activate db
-db --> sys : Send query results
+db --> sys : Envoyer les résultats de la requête
 deactivate db
-alt Query not empty
-    sys --> fr : Render available services' webpage
+alt Requête non vide
+    sys --> fr : Rendre la page web des services disponibles
 else else
-    sys --> fr : Render error message
+    sys --> fr : Rendre un message d'erreur
     deactivate sys
 end
 @enduml
 
 
 @startuml sign_in
-actor User as usr
-participant "GUI" as fr
-participant "System server" as sys
-participant "Database server" as db
+actor Utilisateur as usr
+participant "Interface graphique" as fr
+participant "Système" as sys
+participant "Base de données" as db
 activate usr
-usr -> sys : Request sign in webpage
-sys --> fr : Render webpage
+usr -> sys : Demander la page Web de connexion
+sys --> fr : Rendre la page web
 activate fr
-usr -> fr : Fill sign in form
-fr -> fr : Check form info validity
-alt form is valid
-    fr -> sys : Submit form
+usr -> fr : Remplir le formulaire d'authentification
+fr -> fr : Valider le formulaire
+alt formulaire valide
+    fr -> sys : Envoyer le formulaire
     activate sys
-else else
-    fr --> usr : Alert error message
-end
-sys -> db : Query username and password
+sys -> db : Demander le nom d'utilisateur et mot de passe
 activate db
-db --> sys : Send query results
+db --> sys : Envoyer les résultats de la requête
 deactivate db
-alt user exists
-    sys -> fr : Log in and redirect user to main webpage
+alt utilisateur existe
+    sys -> fr : authentifier l'utilisateur
 else else
-    sys -> fr : Render error message         
+    sys -> fr : Rendre un message d'erreur         
+end
+else else
+    loop formulaire non valide
+        fr --> usr : Rendre un message d'erreur\net redemander au utilisateur de\nremplire ses données
+        usr -> fr : Remplir le formulaire d'authentification
+        fr -> fr : Valider le formulaire
+    end
 end
 @enduml
 
 
 @startuml add_favourites
-actor User as usr
-participant "GUI" as fr
-participant "System server" as sys
-participant "Database server" as db
+actor Utilisateur as usr
+participant "Interface graphique" as fr
+participant "Système" as sys
+participant "Base de données" as db
 activate usr
 activate fr
-usr -> fr : Add service to favorites
-fr -> sys : Send request with service identifier
-sys -> db : Query this service from user's favourites
+usr -> fr : demande d'ajout d'un service aux favoris
+fr -> sys : Envoyer une demande avec l'identificateur de service
+sys -> db : Interroger ce service à partir des favoris de l'utilisateur
 activate sys
 activate db
-db --> sys : Send query results
+db --> sys : Envoyer les résultats de la requête
 deactivate db
-alt service does not exist
-    sys -> db : Add service to user's favourites
+alt service n'existe pas
+    sys -> db : Ajouter un service aux favoris de l'utilisateur
     activate db
     deactivate db
-    sys --> fr : Notify success message
+    sys --> fr : Notifier le message de réussite
 else else
-    sys --> fr : Notify user    
+    sys --> fr : Notifier l'utilisateur   
 end
 @enduml
 
 
 @startuml register_user
-actor User as usr
-participant "GUI" as fr
-participant "System server" as sys
-participant "Database server" as db
-usr -> sys : Request sign up webpage
+actor Utilisateur as usr
+participant "Interface graphique" as fr
+participant "Système" as sys
+participant "Base de données" as db
+usr -> sys : Demander la page Web d'inscription
 activate usr
 activate sys
-sys --> fr : Render webpage
+sys --> fr : Rendre la page web
 activate fr
-usr -> fr : Fill sign up form
-fr -> fr : Check form info validity
-alt form is valid
-    fr -> sys : Submit form
-    sys -> db : Query username
+usr -> fr :Remplir le formulaire d'inscription
+fr -> fr : Vérifier la validité des informations du formulaire
+alt formulaire valide
+    fr -> sys : Soumettre le formulaire
+    sys -> db : Demander le nom d'utilisateur
     activate db
-    db --> sys : Send query results
+    db --> sys : Envoyer les résultats de la requête
     deactivate db
-    alt username does not exists
-        sys -> db : Add user to database
+    alt nom d'utilisateur n'existe pas
+        sys -> db : Ajouter l'utilisateur
         activate db
         deactivate db
     else else
-        sys -> fr : Render error message
+        sys -> fr : Rendre un message d'erreur
     end
 else else
-    fr --> usr : Alert error message
+    fr --> usr : Rendre un message d'erreur
 end
 @enduml
 
 @startuml modify_personnal_service
-actor User as usr
-participant "GUI" as fr
-participant "System server" as sys
-participant "Database server" as db
+actor Utilisateur as usr
+participant "Interface graphique" as fr
+participant "Système" as sys
+participant "Base de données" as db
 activate usr
-usr -> sys : Request a service modification page
+usr -> sys : Demander une page de modification d'un service
 activate sys
-sys --> fr : Render webpage
+sys --> fr : Rendre la page web
 activate fr
-usr -> fr : Fill new info form
-fr -> fr : Check form info validity
-alt form is valid
-    fr -> sys : Submit form
-    sys -> db : Query user's services
+usr -> fr : Remplir de nouvelles informations
+fr -> fr : Valider le formulaire
+alt formulaire valide
+    fr -> sys : Soumettre le formulaire
+    sys -> db : Interroger les services de l'utilisateur
     activate db
-    db --> sys : Send query results
+    db --> sys : Envoyer les résultats de la requête
     deactivate db
-    alt service to modify exists in query
-        sys -> db : Update service info
+    alt le service à modifier existe dans la requête
+        sys -> db : Mettre à jour les informations du service
         activate db
         deactivate db
-        sys -> fr : Notify success
+        sys -> fr : Notifier la réussite
     else else
-        sys -> fr : Render error message
+        sys -> fr : Rendre un message d'erreur
     end
 else else
-    fr --> usr : Alert error message
+    fr --> usr : Rendre un message d'erreur
 end
 @enduml

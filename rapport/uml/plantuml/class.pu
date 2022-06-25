@@ -1,31 +1,31 @@
 @startuml class_diag
 
-class User
-User : -username
-User : -password
-User : -is_admin
-User "*" -- "*" Service
-(User, Service) . Favorite
-User "*" -- "*" Service
-(User, Service) . Rating
-User "1" -- "*" Service : Own
+class Utilisateur
+Utilisateur : -nom_utilisateur
+Utilisateur : -mot_de_passe
+Utilisateur : -est_admin
+Utilisateur "*" -- "*" Service
+(Utilisateur, Service) . Favorie
+Utilisateur "*" -- "*" Service
+(Utilisateur, Service) . Avis
+Utilisateur "1" -- "*" Service : Posséder
 
 class Service
 Service : -latitude
 Service : -longitude
 Service : -type
-Service : -title
-Service "1" -- "*" Image : Have
+Service : -titre
+Service "1" -- "*" Image : Avoir
 
 class Image
-Image : -url
+Image : -lien
 
-class Favorite
-Favorite : -add_date
+class Favorie
+Favorie : -date_ajout
 
-class Rating
-Rating : -stars
-Rating : -comment
+class Avis
+Avis : -etoiles
+Avis : -commentaire
 
 
 @enduml

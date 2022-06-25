@@ -2,20 +2,20 @@
 left to right direction
 
 ' actors
-actor Guest as g
-actor User as u
+actor Visiteur as g
+actor Utilisateur as u
 actor Admin as a
 
 ' system package and use cases
-package "Nearby places localization system"{
-    usecase "Get information about nearby services" as g1
-    usecase "Get information about services nearby a place from the map" as g2
-    usecase "Authenticate" as auth
-    usecase "Manage favorits" as u2
-    usecase "Manage personnal account" as acc_man
-    usecase "Manage users' accounts" as a1
-    usecase "Manage personnal services" as personnal_service_management
-    usecase "Manage all services" as service_management
+package "Système de localisation des services les plus proches"{
+    usecase "Consulter les services les plus proches" as g1
+    usecase "Consulter les services proches à un emplacement sur la carte" as g2
+    usecase "S'authentifier" as auth
+    usecase "Gérer ses favoris" as u2
+    usecase "Gérer son compte" as acc_man
+    usecase "Gérer tout les comptes des utilisateurs" as a1
+    usecase "Gérer ses services" as personnal_service_management
+    usecase "Gérer tout les services" as service_management
 }
 
 ' use case main relations
